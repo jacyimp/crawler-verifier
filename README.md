@@ -1,11 +1,9 @@
 # Crawler Verifier
 
 [![PHPStan level max](https://img.shields.io/badge/PHPStan-level%20max-brightgreen.svg)](https://phpstan.org/)
-[![codecov](https://codecov.io/gh/jacyimp/crawler-verifier/branch/main/graph/badge.svg)](https://codecov.io/gh/jacyimp/crawler-verifier)
+[![Coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#)
 
 Verify that web crawlers are actually who they claim to be.
-
-A `User-Agent` can be spoofed. Crawler Verifier checks the claimed crawler against official IP ranges or forward-confirmed reverse DNS.
 
 ```bash
 composer require jacyimp/crawler-verifier
@@ -24,19 +22,11 @@ $result = $verifier->verify(
 );
 
 if ($result->verified) {
-    // Verified crawler.
+    // Genuine crawler.
 }
 ```
 
-The result tells you which crawler was claimed and how it was verified:
-
-```php
-$result->verified;
-$result->crawler;
-$result->method;
-```
-
-For example:
+Check who was verified and how:
 
 ```php
 use JacyImp\CrawlerVerifier\Crawler;
@@ -46,70 +36,31 @@ $result->crawler === Crawler::Googlebot;
 $result->method === VerificationMethod::IpRange;
 ```
 
-## Identify without verifying
-
-```php
-$crawler = $verifier->identify(
-    $_SERVER['HTTP_USER_AGENT'] ?? '',
-);
-```
-
-This only identifies the claimed crawler from the `User-Agent`.
-
-It does **not** prove the request is genuine.
-
-## Verify a known crawler
-
-If you already know which crawler is being checked:
-
-```php
-use JacyImp\CrawlerVerifier\Crawler;
-
-$result = $verifier->verifyCrawler(
-    Crawler::Googlebot,
-    $_SERVER['REMOTE_ADDR'],
-);
-```
-
 ## Supported crawlers
 
-| Crawler         | Verification               |
-| --------------- | -------------------------- |
-| Googlebot       | IP ranges, FCrDNS fallback |
-| Bingbot         | IP ranges, FCrDNS fallback |
-| Applebot        | IP ranges, FCrDNS fallback |
-| DuckDuckBot     | IP ranges                  |
-| Pinterestbot    | FCrDNS                     |
-| Baiduspider     | FCrDNS                     |
-| GPTBot          | IP ranges                  |
-| OAI-SearchBot   | IP ranges                  |
-| OAI-AdsBot      | IP ranges                  |
-| PerplexityBot   | IP ranges                  |
-| Perplexity-User | IP ranges                  |
+| Crawler         | Verification       |
+| --------------- | ------------------ |
+| Googlebot       | IP ranges + FCrDNS |
+| Bingbot         | IP ranges + FCrDNS |
+| Applebot        | IP ranges + FCrDNS |
+| DuckDuckBot     | IP ranges          |
+| Pinterestbot    | FCrDNS             |
+| Baiduspider     | FCrDNS             |
+| GPTBot          | IP ranges          |
+| OAI-SearchBot   | IP ranges          |
+| OAI-AdsBot      | IP ranges          |
+| PerplexityBot   | IP ranges          |
+| Perplexity-User | IP ranges          |
 
-## IP ranges
+Official IP range snapshots are bundled with the package.
 
-The package includes bundled snapshots of official crawler IP ranges.
-
-Runtime verification does not make external HTTP requests.
-
-For IP-based crawlers, ranges are resolved in this order:
-
-1. Explicit local range directories
-2. Refreshed PSR-16 cache
-3. Bundled snapshots
-
-DNS-backed verification may perform DNS lookups.
+Runtime verification never downloads IP ranges. DNS-backed crawlers may perform DNS lookups.
 
 ## Cache
 
-Caching is optional.
-
-Crawler Verifier depends only on `psr/simple-cache`, so you can use any PSR-16 implementation.
+Pass any PSR-16 cache:
 
 ```php
-use JacyImp\CrawlerVerifier\CrawlerVerifier;
-
 $verifier = new CrawlerVerifier(
     cache: $cache,
 );
@@ -121,37 +72,20 @@ The cache is used for:
 * positive DNS results
 * negative DNS results
 
-Default DNS TTLs are:
-
-```text
-Positive: 3600 seconds
-Negative: 300 seconds
-```
-
-They can be changed:
-
-```php
-$verifier = new CrawlerVerifier(
-    cache: $cache,
-    dnsCacheTtlSeconds: 7200,
-    dnsNegativeCacheTtlSeconds: 600,
-);
-```
-
-A custom cache key prefix can also be supplied:
+Optional tuning:
 
 ```php
 $verifier = new CrawlerVerifier(
     cache: $cache,
     cacheKeyPrefix: 'my_app.crawlers',
+    dnsCacheTtlSeconds: 7200,
+    dnsNegativeCacheTtlSeconds: 600,
 );
 ```
 
 ## Refresh IP ranges
 
-Refreshing is explicit.
-
-Crawler verification itself never downloads IP ranges.
+Refreshing is explicit and requires a PSR-16 cache.
 
 ```php
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
@@ -163,51 +97,52 @@ $updater = new IpRangeUpdater(
 $result = $updater->refresh();
 ```
 
-Refresh a single crawler:
+Refresh one crawler:
 
 ```php
 use JacyImp\CrawlerVerifier\Crawler;
 
-$result = $updater->refresh(
+$updater->refresh(
     Crawler::GPTBot,
 );
 ```
 
-Or only refresh stale data:
+Only refresh stale ranges:
 
 ```php
-$result = $updater->refreshIfStale(
+$updater->refreshIfStale(
     maxAgeSeconds: 86400,
 );
 ```
 
-A failed download or invalid feed does not replace the previous cached ranges.
+A failed or invalid refresh does not replace the previous cached ranges.
 
-Inspect the result:
+## Identify only
+
+Need to know what the `User-Agent` claims to be without verifying it?
 
 ```php
-$result->successful();
-
-$result->wasUpdated(
-    Crawler::GPTBot,
+$crawler = $verifier->identify(
+    $_SERVER['HTTP_USER_AGENT'] ?? '',
 );
+```
 
-$result->wasSkipped(
-    Crawler::GPTBot,
-);
+This does **not** prove the crawler is genuine.
 
-$result->failed(
-    Crawler::GPTBot,
-);
+## Verify a known crawler
 
-$result->error(
-    Crawler::GPTBot,
+```php
+use JacyImp\CrawlerVerifier\Crawler;
+
+$result = $verifier->verifyCrawler(
+    Crawler::Googlebot,
+    $_SERVER['REMOTE_ADDR'],
 );
 ```
 
 ## Local IP ranges
 
-You can provide your own range snapshots.
+Local range files override cached and bundled ranges:
 
 ```php
 $verifier = new CrawlerVerifier(
@@ -217,8 +152,6 @@ $verifier = new CrawlerVerifier(
 );
 ```
 
-Files are named after the crawler:
-
 ```text
 crawler-ranges/
 ├── googlebot.json
@@ -226,7 +159,7 @@ crawler-ranges/
 └── perplexitybot.json
 ```
 
-They use the same format as the official feeds:
+Format:
 
 ```json
 {
@@ -241,28 +174,30 @@ They use the same format as the official feeds:
 }
 ```
 
-Explicit local ranges take priority over both refreshed and bundled data.
+Range priority:
 
-## Custom providers
+```text
+local ranges
+→ refreshed cache
+→ bundled snapshots
+```
 
-Additional providers can be appended to the built-in provider:
+## Custom crawlers
+
+Add your own provider without replacing the built-ins:
 
 ```php
-use JacyImp\CrawlerVerifier\CrawlerVerifier;
-
 $verifier = new CrawlerVerifier(
     additionalProviders: [
-        $provider,
+        $myCrawlerProvider,
     ],
 );
 ```
 
-Custom providers implement:
+Define an identity:
 
 ```php
 use JacyImp\CrawlerVerifier\CrawlerIdentity;
-use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
-use JacyImp\CrawlerVerifier\VerificationMethod;
 
 enum MyCrawler: string implements CrawlerIdentity
 {
@@ -273,6 +208,14 @@ enum MyCrawler: string implements CrawlerIdentity
         return $this->value;
     }
 }
+```
+
+And implement:
+
+```php
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
+use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
+use JacyImp\CrawlerVerifier\VerificationMethod;
 
 final class MyCrawlerProvider implements CrawlerProvider
 {
@@ -292,34 +235,27 @@ final class MyCrawlerProvider implements CrawlerProvider
         CrawlerIdentity $crawler,
         string $ip,
     ): ?VerificationMethod {
-        // Verify the crawler using your own authoritative mechanism.
+        // Verify using your authoritative source.
+
         return null;
     }
 }
 ```
 
-## Verification methods
+## How verification works
 
-### IP ranges
+**IP ranges**
 
-The request IP is checked against ranges published by the crawler operator.
+The request IP is matched against ranges published by the crawler operator. IPv4 and IPv6 CIDRs are supported.
 
-Both IPv4 and IPv6 CIDRs are supported.
+**FCrDNS**
 
-### Forward-confirmed reverse DNS
-
-FCrDNS verification:
-
-1. Reverse-resolves the request IP.
-2. Validates the hostname against the crawler's official domain.
-3. Resolves that hostname forward.
-4. Confirms the original IP is among the returned addresses.
-
-Checking only reverse DNS is not enough.
+1. Reverse-resolve the request IP.
+2. Verify the hostname belongs to the crawler.
+3. Resolve the hostname forward.
+4. Confirm the original IP is returned.
 
 ## Requirements
 
 * PHP 8.2+
-* `psr/simple-cache` ^3.0
-
-No framework is required.
+* PSR-16 (`psr/simple-cache` ^3.0)
