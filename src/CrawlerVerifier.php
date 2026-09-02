@@ -66,7 +66,7 @@ final class CrawlerVerifier
 
     public function identify(
         string $userAgent,
-    ): ?Crawler {
+    ): ?CrawlerIdentity {
         foreach ($this->providers as $provider) {
             $crawler = $provider->identify(
                 $userAgent,
@@ -81,7 +81,7 @@ final class CrawlerVerifier
     }
 
     public function verifyCrawler(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $ip,
     ): VerificationResult {
         foreach ($this->providers as $provider) {
@@ -94,16 +94,12 @@ final class CrawlerVerifier
                 $ip,
             );
 
-            if ($method === null) {
-                return VerificationResult::unverified(
-                    $crawler,
+            if ($method !== null) {
+                return VerificationResult::verified(
+                    crawler: $crawler,
+                    method: $method,
                 );
             }
-
-            return VerificationResult::verified(
-                crawler: $crawler,
-                method: $method,
-            );
         }
 
         return VerificationResult::unverified(

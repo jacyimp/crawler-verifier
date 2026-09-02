@@ -8,6 +8,7 @@ use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\Ip\IpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\AppleProvider;
+use JacyImp\CrawlerVerifier\Provider\BaiduProvider;
 use JacyImp\CrawlerVerifier\Provider\BingProvider;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProviderRegistry;
 use JacyImp\CrawlerVerifier\Provider\DuckDuckGoProvider;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(GoogleProvider::class)]
 #[UsesClass(BingProvider::class)]
 #[UsesClass(AppleProvider::class)]
+#[UsesClass(BaiduProvider::class)]
 #[UsesClass(DuckDuckGoProvider::class)]
 #[UsesClass(PinterestProvider::class)]
 #[UsesClass(PerplexityProvider::class)]

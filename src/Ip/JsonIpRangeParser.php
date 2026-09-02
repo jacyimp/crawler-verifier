@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Ip;
 
+use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JsonException;
-use RuntimeException;
 
 final class JsonIpRangeParser
 {
@@ -17,21 +17,24 @@ final class JsonIpRangeParser
         try {
             $data = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException(
-                'Unable to parse IP range data.',
-                previous: $exception,
+            throw InvalidIpRangeDataException::unableToParse(
+                $exception,
             );
         }
 
-        if (!is_array($data) || !isset($data['prefixes']) || !is_array($data['prefixes'])) {
-            throw new RuntimeException('Invalid IP range data.');
+        if (
+            !is_array($data)
+            || !isset($data['prefixes'])
+            || !is_array($data['prefixes'])
+        ) {
+            throw InvalidIpRangeDataException::invalidData();
         }
 
         $ranges = [];
 
         foreach ($data['prefixes'] as $prefix) {
             if (!is_array($prefix)) {
-                throw new RuntimeException('Invalid IP range prefix.');
+                throw InvalidIpRangeDataException::invalidPrefix();
             }
 
             $range = $prefix['ipv4Prefix']
@@ -39,7 +42,7 @@ final class JsonIpRangeParser
                 ?? null;
 
             if (!is_string($range) || !$this->isValidRange($range)) {
-                throw new RuntimeException('Invalid IP range prefix.');
+                throw InvalidIpRangeDataException::invalidPrefix();
             }
 
             $ranges[] = $range;

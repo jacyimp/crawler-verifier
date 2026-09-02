@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Ip;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
-use Throwable;
 
 final readonly class PsrCacheIpRangeSource implements IpRangeSource
 {
@@ -42,7 +42,7 @@ final readonly class PsrCacheIpRangeSource implements IpRangeSource
                     $this->cacheKeyPrefix,
                 ),
             );
-        } catch (Throwable) {
+        } catch (CacheException) {
             return null;
         }
 

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Tests;
 
-use InvalidArgumentException;
 use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CrawlerVerifierConfig::class)]
+#[UsesClass(InvalidConfigurationException::class)]
 final class CrawlerVerifierConfigTest extends TestCase
 {
     #[Test]
@@ -30,7 +32,7 @@ final class CrawlerVerifierConfigTest extends TestCase
     public function itRejectsAnEmptyCacheKeyPrefix(): void
     {
         $this->expectException(
-            InvalidArgumentException::class,
+            InvalidConfigurationException::class,
         );
 
         new CrawlerVerifierConfig(
@@ -42,7 +44,7 @@ final class CrawlerVerifierConfigTest extends TestCase
     public function itRejectsAnInvalidCacheKeyPrefix(): void
     {
         $this->expectException(
-            InvalidArgumentException::class,
+            InvalidConfigurationException::class,
         );
 
         new CrawlerVerifierConfig(
@@ -54,7 +56,7 @@ final class CrawlerVerifierConfigTest extends TestCase
     public function itRejectsANegativeDnsCacheTtl(): void
     {
         $this->expectException(
-            InvalidArgumentException::class,
+            InvalidConfigurationException::class,
         );
 
         new CrawlerVerifierConfig(
@@ -66,7 +68,7 @@ final class CrawlerVerifierConfigTest extends TestCase
     public function itRejectsANegativeDnsCacheNegativeTtl(): void
     {
         $this->expectException(
-            InvalidArgumentException::class,
+            InvalidConfigurationException::class,
         );
 
         new CrawlerVerifierConfig(

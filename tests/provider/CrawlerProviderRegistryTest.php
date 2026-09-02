@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Tests\Provider;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\Ip\IpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\AppleProvider;
@@ -82,18 +83,18 @@ final class CrawlerProviderRegistryTest extends TestCase
         return new class implements CrawlerProvider {
             public function identify(
                 string $userAgent,
-            ): ?Crawler {
+            ): ?CrawlerIdentity {
                 return null;
             }
 
             public function supports(
-                Crawler $crawler,
+                CrawlerIdentity $crawler,
             ): bool {
                 return false;
             }
 
             public function verify(
-                Crawler $crawler,
+                CrawlerIdentity $crawler,
                 string $ip,
             ): ?VerificationMethod {
                 return null;

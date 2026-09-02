@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Provider;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\Ip\IpRangeMatcher;
 use JacyImp\CrawlerVerifier\Ip\IpRangeSource;
@@ -28,10 +29,10 @@ final class AppleProvider extends IpRangeCrawlerProvider
     }
 
     public function verify(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $ip,
     ): ?VerificationMethod {
-        if (!$this->supports($crawler)) {
+        if (!$crawler instanceof Crawler || !$this->supports($crawler)) {
             return null;
         }
 

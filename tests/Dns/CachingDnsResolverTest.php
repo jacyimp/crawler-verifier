@@ -6,13 +6,16 @@ namespace JacyImp\CrawlerVerifier\Tests\Dns;
 
 use JacyImp\CrawlerVerifier\Dns\CachingDnsResolver;
 use JacyImp\CrawlerVerifier\Dns\DnsResolver;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 #[CoversClass(CachingDnsResolver::class)]
+#[UsesClass(InvalidConfigurationException::class)]
 final class CachingDnsResolverTest extends TestCase
 {
     #[Test]
@@ -181,6 +184,38 @@ final class CachingDnsResolverTest extends TestCase
         self::assertSame(
             2,
             $state->reverseCalls,
+        );
+    }
+
+    #[Test]
+    public function itRejectsANegativePositiveTtlWithAPackageException(): void
+    {
+        $this->expectException(
+            InvalidConfigurationException::class,
+        );
+
+        new CachingDnsResolver(
+            resolver: $this->resolver(
+                state: $this->state(),
+            ),
+            cache: new ArrayCache(),
+            positiveTtlSeconds: -1,
+        );
+    }
+
+    #[Test]
+    public function itRejectsANegativeNegativeTtlWithAPackageException(): void
+    {
+        $this->expectException(
+            InvalidConfigurationException::class,
+        );
+
+        new CachingDnsResolver(
+            resolver: $this->resolver(
+                state: $this->state(),
+            ),
+            cache: new ArrayCache(),
+            negativeTtlSeconds: -1,
         );
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Tests;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
 use JacyImp\CrawlerVerifier\VerificationMethod;
@@ -151,6 +152,79 @@ final class CrawlerVerifierTest extends TestCase
     }
 
     #[Test]
+    public function itTriesTheNextSupportingProviderWhenTheFirstVerificationFails(): void
+    {
+        $verifier = new CrawlerVerifier([
+            $this->provider(
+                crawler: Crawler::Googlebot,
+                userAgentFragment: 'Googlebot',
+            ),
+            $this->provider(
+                crawler: Crawler::Googlebot,
+                userAgentFragment: 'Googlebot',
+                verificationMethod: VerificationMethod::ForwardConfirmedReverseDns,
+            ),
+        ]);
+
+        $result = $verifier->verifyCrawler(
+            Crawler::Googlebot,
+            '192.0.2.42',
+        );
+
+        self::assertTrue($result->verified);
+        self::assertSame(
+            Crawler::Googlebot,
+            $result->crawler,
+        );
+        self::assertSame(
+            VerificationMethod::ForwardConfirmedReverseDns,
+            $result->method,
+        );
+    }
+
+    #[Test]
+    public function itCanIdentifyAndVerifyACustomCrawlerIdentity(): void
+    {
+        $crawler = new class implements CrawlerIdentity {
+            public function id(): string
+            {
+                return 'my-company-bot';
+            }
+        };
+
+        $verifier = new CrawlerVerifier([
+            $this->provider(
+                crawler: $crawler,
+                userAgentFragment: 'MyCompanyBot',
+                verificationMethod: VerificationMethod::IpRange,
+            ),
+        ]);
+
+        self::assertSame(
+            $crawler,
+            $verifier->identify(
+                'Mozilla/5.0; compatible; MyCompanyBot/1.0',
+            ),
+        );
+
+        $result = $verifier->verify(
+            userAgent: 'Mozilla/5.0; compatible; MyCompanyBot/1.0',
+            ip: '192.0.2.42',
+        );
+
+        self::assertTrue($result->verified);
+        self::assertSame($crawler, $result->crawler);
+        self::assertSame(
+            'my-company-bot',
+            $result->crawler?->id(),
+        );
+        self::assertSame(
+            VerificationMethod::IpRange,
+            $result->method,
+        );
+    }
+
+    #[Test]
     public function itReturnsAnUnverifiedResultWhenNoProviderSupportsTheCrawler(): void
     {
         $verifier = new CrawlerVerifier([]);
@@ -169,7 +243,7 @@ final class CrawlerVerifierTest extends TestCase
     }
 
     private function provider(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $userAgentFragment,
         ?VerificationMethod $verificationMethod = null,
     ): CrawlerProvider {
@@ -179,7 +253,7 @@ final class CrawlerVerifierTest extends TestCase
             $verificationMethod,
         ) implements CrawlerProvider {
             public function __construct(
-                private readonly Crawler $crawler,
+                private readonly CrawlerIdentity $crawler,
                 private readonly string $userAgentFragment,
                 private readonly ?VerificationMethod $verificationMethod,
             ) {
@@ -187,7 +261,7 @@ final class CrawlerVerifierTest extends TestCase
 
             public function identify(
                 string $userAgent,
-            ): ?Crawler {
+            ): ?CrawlerIdentity {
                 return str_contains(
                     $userAgent,
                     $this->userAgentFragment,
@@ -197,13 +271,13 @@ final class CrawlerVerifierTest extends TestCase
             }
 
             public function supports(
-                Crawler $crawler,
+                CrawlerIdentity $crawler,
             ): bool {
                 return $crawler === $this->crawler;
             }
 
             public function verify(
-                Crawler $crawler,
+                CrawlerIdentity $crawler,
                 string $ip,
             ): ?VerificationMethod {
                 return $this->verificationMethod;

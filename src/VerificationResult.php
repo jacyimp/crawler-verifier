@@ -8,13 +8,13 @@ final readonly class VerificationResult
 {
     private function __construct(
         public bool $verified,
-        public ?Crawler $crawler,
+        public ?CrawlerIdentity $crawler,
         public ?VerificationMethod $method,
     ) {
     }
 
     public static function verified(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         VerificationMethod $method,
     ): self {
         return new self(
@@ -24,8 +24,9 @@ final readonly class VerificationResult
         );
     }
 
-    public static function unverified(?Crawler $crawler = null): self
-    {
+    public static function unverified(
+        ?CrawlerIdentity $crawler = null,
+    ): self {
         return new self(
             verified: false,
             crawler: $crawler,

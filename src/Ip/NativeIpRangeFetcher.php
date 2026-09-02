@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Ip;
 
-use RuntimeException;
+use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 
 final class NativeIpRangeFetcher implements IpRangeFetcher
 {
     public function fetch(string $url): string
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new RuntimeException(sprintf(
-                'Invalid IP range URL "%s".',
-                $url,
-            ));
+            throw IpRangeSourceException::invalidUrl($url);
+        }
+
+        if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== 'https') {
+            throw IpRangeSourceException::unsupportedScheme($url);
         }
 
         $context = stream_context_create([
@@ -32,10 +33,7 @@ final class NativeIpRangeFetcher implements IpRangeFetcher
         );
 
         if ($contents === false) {
-            throw new RuntimeException(sprintf(
-                'Unable to fetch IP ranges from "%s".',
-                $url,
-            ));
+            throw IpRangeSourceException::unableToFetch($url);
         }
 
         return $contents;

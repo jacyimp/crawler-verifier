@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier;
 
-enum Crawler: string
+enum Crawler: string implements CrawlerIdentity
 {
     case Googlebot = 'googlebot';
     case Bingbot = 'bingbot';
@@ -19,4 +19,9 @@ enum Crawler: string
 
     case PerplexityBot = 'perplexitybot';
     case PerplexityUser = 'perplexity-user';
+
+    public function id(): string
+    {
+        return $this->value;
+    }
 }

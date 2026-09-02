@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Dns;
 
-use InvalidArgumentException;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
+use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
 use stdClass;
-use Throwable;
 
 final readonly class CachingDnsResolver implements DnsResolver
 {
@@ -19,15 +19,11 @@ final readonly class CachingDnsResolver implements DnsResolver
         private string $cacheKeyPrefix = 'crawler_verifier',
     ) {
         if ($this->positiveTtlSeconds < 0) {
-            throw new InvalidArgumentException(
-                'Positive DNS cache TTL cannot be negative.',
-            );
+            throw InvalidConfigurationException::negativePositiveDnsCacheTtl();
         }
 
         if ($this->negativeTtlSeconds < 0) {
-            throw new InvalidArgumentException(
-                'Negative DNS cache TTL cannot be negative.',
-            );
+            throw InvalidConfigurationException::negativeDnsNegativeCacheTtl();
         }
     }
 
@@ -55,7 +51,7 @@ final readonly class CachingDnsResolver implements DnsResolver
                     ? $cached
                     : null;
             }
-        } catch (Throwable) {
+        } catch (CacheException) {
             // Cache failures must not prevent DNS verification.
         }
 
@@ -105,7 +101,7 @@ final readonly class CachingDnsResolver implements DnsResolver
                     static fn (mixed $ip): bool => is_string($ip),
                 ));
             }
-        } catch (Throwable) {
+        } catch (CacheException) {
             // Cache failures must not prevent DNS verification.
         }
 
@@ -135,7 +131,7 @@ final readonly class CachingDnsResolver implements DnsResolver
                 $value,
                 $ttl,
             );
-        } catch (Throwable) {
+        } catch (CacheException) {
             // Cache failures are non-fatal.
         }
     }

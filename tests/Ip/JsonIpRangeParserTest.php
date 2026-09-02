@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Tests\Ip;
 
+use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JacyImp\CrawlerVerifier\Ip\JsonIpRangeParser;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 #[CoversClass(JsonIpRangeParser::class)]
+#[UsesClass(InvalidIpRangeDataException::class)]
 final class JsonIpRangeParserTest extends TestCase
 {
     #[Test]
@@ -53,7 +55,7 @@ final class JsonIpRangeParserTest extends TestCase
     {
         $parser = new JsonIpRangeParser();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidIpRangeDataException::class);
 
         $parser->parse('{');
     }
@@ -63,7 +65,7 @@ final class JsonIpRangeParserTest extends TestCase
     {
         $parser = new JsonIpRangeParser();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidIpRangeDataException::class);
 
         $parser->parse('{}');
     }
@@ -73,7 +75,7 @@ final class JsonIpRangeParserTest extends TestCase
     {
         $parser = new JsonIpRangeParser();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidIpRangeDataException::class);
 
         $parser->parse(<<<'JSON'
         {
@@ -91,7 +93,7 @@ final class JsonIpRangeParserTest extends TestCase
     {
         $parser = new JsonIpRangeParser();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidIpRangeDataException::class);
 
         $parser->parse(<<<'JSON'
         {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Provider;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\Ip\IpRangeMatcher;
 use JacyImp\CrawlerVerifier\Ip\IpRangeSource;
 use JacyImp\CrawlerVerifier\VerificationMethod;
@@ -28,20 +29,21 @@ abstract class IpRangeCrawlerProvider implements CrawlerProvider
         return null;
     }
 
-    public function supports(Crawler $crawler): bool
+    public function supports(CrawlerIdentity $crawler): bool
     {
-        return in_array(
-            $crawler,
-            $this->userAgentTokens(),
-            true,
-        );
+        return $crawler instanceof Crawler
+            && in_array(
+                $crawler,
+                $this->userAgentTokens(),
+                true,
+            );
     }
 
     public function verify(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $ip,
     ): ?VerificationMethod {
-        if (!$this->supports($crawler)) {
+        if (!$crawler instanceof Crawler || !$this->supports($crawler)) {
             return null;
         }
 

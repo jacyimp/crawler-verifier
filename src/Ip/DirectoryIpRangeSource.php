@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Ip;
 
 use JacyImp\CrawlerVerifier\Crawler;
-use RuntimeException;
+use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 
 final readonly class DirectoryIpRangeSource implements IpRangeSource
 {
@@ -30,10 +30,7 @@ final readonly class DirectoryIpRangeSource implements IpRangeSource
         $contents = file_get_contents($path);
 
         if ($contents === false) {
-            throw new RuntimeException(sprintf(
-                'Unable to read IP ranges from "%s".',
-                $path,
-            ));
+            throw IpRangeSourceException::unableToRead($path);
         }
 
         return $this->parser->parse($contents);

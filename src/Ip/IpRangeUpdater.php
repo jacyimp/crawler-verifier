@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Ip;
 
-use InvalidArgumentException;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
+use JacyImp\CrawlerVerifier\Exception\CrawlerVerifierException;
+use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
+use JacyImp\CrawlerVerifier\Exception\IpRangeUpdateException;
+use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
-use RuntimeException;
-use Throwable;
 
 final class IpRangeUpdater
 {
@@ -35,9 +37,7 @@ final class IpRangeUpdater
         CrawlerVerifierConfig $config,
     ): self {
         if ($config->cache === null) {
-            throw new InvalidArgumentException(
-                'A PSR-16 cache is required to refresh IP ranges.',
-            );
+            throw InvalidConfigurationException::cacheRequiredForIpRangeRefresh();
         }
 
         return new self(
@@ -61,9 +61,7 @@ final class IpRangeUpdater
         ?Crawler $crawler = null,
     ): IpRangeUpdateResult {
         if ($maxAgeSeconds < 0) {
-            throw new InvalidArgumentException(
-                'Maximum IP range age cannot be negative.',
-            );
+            throw InvalidConfigurationException::negativeMaximumIpRangeAge();
         }
 
         $feeds = $this->resolveFeeds(
@@ -126,7 +124,7 @@ final class IpRangeUpdater
                 $this->refreshFeed($feed);
 
                 $updated[] = $feed->crawler;
-            } catch (Throwable $exception) {
+            } catch (CrawlerVerifierException|CacheException $exception) {
                 $errors[$feed->crawler->value] = $exception->getMessage();
             }
         }
@@ -149,10 +147,9 @@ final class IpRangeUpdater
         );
 
         if ($ranges === []) {
-            throw new RuntimeException(sprintf(
-                'IP range feed for "%s" contains no ranges.',
-                $feed->crawler->value,
-            ));
+            throw InvalidIpRangeDataException::emptyFeed(
+                $feed->crawler,
+            );
         }
 
         if (
@@ -167,10 +164,9 @@ final class IpRangeUpdater
                 ],
             )
         ) {
-            throw new RuntimeException(sprintf(
-                'Unable to cache IP ranges for "%s".',
-                $feed->crawler->value,
-            ));
+            throw IpRangeUpdateException::unableToCache(
+                $feed->crawler,
+            );
         }
     }
 

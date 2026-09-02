@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Ip;
 
-use InvalidArgumentException;
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 
 final class IpRangeFeedRegistry
 {
@@ -23,10 +23,9 @@ final class IpRangeFeedRegistry
 
         foreach ($feeds as $feed) {
             if ($this->has($feed->crawler)) {
-                throw new InvalidArgumentException(sprintf(
-                    'An IP range feed is already registered for "%s".',
-                    $feed->crawler->value,
-                ));
+                throw InvalidConfigurationException::duplicateIpRangeFeed(
+                    $feed->crawler,
+                );
             }
 
             $this->feeds[] = $feed;

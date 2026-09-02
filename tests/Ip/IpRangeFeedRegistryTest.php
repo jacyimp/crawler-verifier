@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Tests\Ip;
 
-use InvalidArgumentException;
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Ip\IpRangeFeed;
 use JacyImp\CrawlerVerifier\Ip\IpRangeFeedRegistry;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversClass(IpRangeFeedRegistry::class)]
 #[UsesClass(IpRangeFeed::class)]
+#[UsesClass(InvalidConfigurationException::class)]
 final class IpRangeFeedRegistryTest extends TestCase
 {
     #[Test]
@@ -86,7 +87,7 @@ final class IpRangeFeedRegistryTest extends TestCase
     public function itRejectsDuplicateFeedsForTheSameCrawler(): void
     {
         $this->expectException(
-            InvalidArgumentException::class,
+            InvalidConfigurationException::class,
         );
 
         new IpRangeFeedRegistry([

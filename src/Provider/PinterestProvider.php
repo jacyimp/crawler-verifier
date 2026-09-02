@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Provider;
 
 use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 
@@ -36,13 +37,13 @@ final readonly class PinterestProvider implements CrawlerProvider
         return null;
     }
 
-    public function supports(Crawler $crawler): bool
+    public function supports(CrawlerIdentity $crawler): bool
     {
         return $crawler === Crawler::PinterestBot;
     }
 
     public function verify(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $ip,
     ): ?VerificationMethod {
         if (!$this->supports($crawler)) {
