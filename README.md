@@ -154,7 +154,7 @@ Refreshing is explicit.
 Crawler verification itself never downloads IP ranges.
 
 ```php
-use JacyImp\CrawlerVerifier\Ip\IpRangeUpdater;
+use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
 
 $updater = IpRangeUpdater::create($config);
 
@@ -256,27 +256,40 @@ $verifier = new CrawlerVerifier([
 Custom providers implement:
 
 ```php
-use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 
+enum MyCrawler: string implements CrawlerIdentity
+{
+    case Bot = 'my-crawler';
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+}
+
 final class MyCrawlerProvider implements CrawlerProvider
 {
-    public function identify(string $userAgent): ?Crawler
+    public function identify(string $userAgent): ?CrawlerIdentity
     {
-        // ...
+        return str_contains($userAgent, 'MyCrawler/')
+            ? MyCrawler::Bot
+            : null;
     }
 
-    public function supports(Crawler $crawler): bool
+    public function supports(CrawlerIdentity $crawler): bool
     {
-        // ...
+        return $crawler === MyCrawler::Bot;
     }
 
     public function verify(
-        Crawler $crawler,
+        CrawlerIdentity $crawler,
         string $ip,
     ): ?VerificationMethod {
-        // ...
+        // Verify the crawler using your own authoritative mechanism.
+        return null;
     }
 }
 ```

@@ -1,5 +1,5 @@
 {
-    "name": "jacyimp/verified-crawler",
+    "name": "jacyimp/crawler-verifier",
     "description": "Verify that web crawlers are actually who they claim to be.",
     "type": "library",
     "license": "MIT",
@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "psr/simple-cache": "3.0"
+        "psr/simple-cache": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0 || ^12.0",
