@@ -7,7 +7,7 @@ namespace JacyImp\CrawlerVerifier\IpRange\Update;
 interface IpRangeFetcher
 {
     /**
-     * @throws IpRangeSourceException
+     * @throws \JacyImp\CrawlerVerifier\Exception\IpRangeSourceException
      */
     public function fetch(string $url): string;
 }

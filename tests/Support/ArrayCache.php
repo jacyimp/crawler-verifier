@@ -77,9 +77,9 @@ final class ArrayCache implements CacheInterface
     }
 
     /**
-     * @param iterable<mixed, mixed> $keys
+     * @param iterable<mixed, string> $keys
      *
-     * @return iterable<mixed, mixed>
+     * @return iterable<string, mixed>
      */
     public function getMultiple(
         iterable $keys,
@@ -137,7 +137,7 @@ final class ArrayCache implements CacheInterface
     }
 
     /**
-     * @param iterable<mixed, mixed> $keys
+     * @param iterable<mixed, string> $keys
      */
     public function deleteMultiple(
         iterable $keys,

@@ -37,9 +37,9 @@ final class FaultyCache implements CacheInterface
         return true;
     }
     /**
-     * @param iterable<mixed, mixed> $keys
+     * @param iterable<mixed, string> $keys
      *
-     * @return iterable<mixed, mixed>
+     * @return iterable<string, mixed>
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -51,7 +51,7 @@ final class FaultyCache implements CacheInterface
         return true;
     }
     /**
-     * @param iterable<mixed, mixed> $keys
+     * @param iterable<mixed, string> $keys
      */
     public function deleteMultiple(iterable $keys): bool
     {

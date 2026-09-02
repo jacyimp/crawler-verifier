@@ -20,12 +20,12 @@ use Psr\SimpleCache\CacheInterface;
 final class CrawlerVerifier
 {
     /**
-     * @var list<CrawlerProvider>
+     * @var list<\JacyImp\CrawlerVerifier\Provider\CrawlerProvider>
      */
     private array $providers;
 
     /**
-     * @param iterable<CrawlerProvider> $additionalProviders
+     * @param iterable<\JacyImp\CrawlerVerifier\Provider\CrawlerProvider> $additionalProviders
      * @param list<string> $localRangeDirectories
      */
     public function __construct(
