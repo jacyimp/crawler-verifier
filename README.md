@@ -26,7 +26,13 @@ if ($result->verified) {
 }
 ```
 
-Check who was verified and how:
+The result contains the claimed crawler and verification method:
+
+```php
+$result->verified;
+$result->crawler;
+$result->method;
+```
 
 ```php
 use JacyImp\CrawlerVerifier\Crawler;
@@ -56,70 +62,7 @@ Official IP range snapshots are bundled with the package.
 
 Runtime verification never downloads IP ranges. DNS-backed crawlers may perform DNS lookups.
 
-## Cache
-
-Pass any PSR-16 cache:
-
-```php
-$verifier = new CrawlerVerifier(
-    cache: $cache,
-);
-```
-
-The cache is used for:
-
-* refreshed IP ranges
-* positive DNS results
-* negative DNS results
-
-Optional tuning:
-
-```php
-$verifier = new CrawlerVerifier(
-    cache: $cache,
-    cacheKeyPrefix: 'my_app.crawlers',
-    dnsCacheTtlSeconds: 7200,
-    dnsNegativeCacheTtlSeconds: 600,
-);
-```
-
-## Refresh IP ranges
-
-Refreshing is explicit and requires a PSR-16 cache.
-
-```php
-use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
-
-$updater = new IpRangeUpdater(
-    cache: $cache,
-);
-
-$result = $updater->refresh();
-```
-
-Refresh one crawler:
-
-```php
-use JacyImp\CrawlerVerifier\Crawler;
-
-$updater->refresh(
-    Crawler::GPTBot,
-);
-```
-
-Only refresh stale ranges:
-
-```php
-$updater->refreshIfStale(
-    maxAgeSeconds: 86400,
-);
-```
-
-A failed or invalid refresh does not replace the previous cached ranges.
-
-## Identify only
-
-Need to know what the `User-Agent` claims to be without verifying it?
+## Identify without verifying
 
 ```php
 $crawler = $verifier->identify(
@@ -127,7 +70,7 @@ $crawler = $verifier->identify(
 );
 ```
 
-This does **not** prove the crawler is genuine.
+This only identifies what the `User-Agent` claims to be.
 
 ## Verify a known crawler
 
@@ -140,120 +83,13 @@ $result = $verifier->verifyCrawler(
 );
 ```
 
-## Local IP ranges
+## Documentation
 
-Local range files override cached and bundled ranges:
-
-```php
-$verifier = new CrawlerVerifier(
-    localRangeDirectories: [
-        __DIR__ . '/crawler-ranges',
-    ],
-);
-```
-
-```text
-crawler-ranges/
-├── googlebot.json
-├── gptbot.json
-└── perplexitybot.json
-```
-
-Format:
-
-```json
-{
-    "prefixes": [
-        {
-            "ipv4Prefix": "192.0.2.0/24"
-        },
-        {
-            "ipv6Prefix": "2001:db8::/32"
-        }
-    ]
-}
-```
-
-Range priority:
-
-```text
-local ranges
-→ refreshed cache
-→ bundled snapshots
-```
-
-## Custom crawlers
-
-Add your own provider without replacing the built-ins:
-
-```php
-$verifier = new CrawlerVerifier(
-    additionalProviders: [
-        $myCrawlerProvider,
-    ],
-);
-```
-
-Define an identity:
-
-```php
-use JacyImp\CrawlerVerifier\CrawlerIdentity;
-
-enum MyCrawler: string implements CrawlerIdentity
-{
-    case Bot = 'my-crawler';
-
-    public function id(): string
-    {
-        return $this->value;
-    }
-}
-```
-
-And implement:
-
-```php
-use JacyImp\CrawlerVerifier\CrawlerIdentity;
-use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
-use JacyImp\CrawlerVerifier\VerificationMethod;
-
-final class MyCrawlerProvider implements CrawlerProvider
-{
-    public function identify(string $userAgent): ?CrawlerIdentity
-    {
-        return str_contains($userAgent, 'MyCrawler/')
-            ? MyCrawler::Bot
-            : null;
-    }
-
-    public function supports(CrawlerIdentity $crawler): bool
-    {
-        return $crawler === MyCrawler::Bot;
-    }
-
-    public function verify(
-        CrawlerIdentity $crawler,
-        string $ip,
-    ): ?VerificationMethod {
-        // Verify using your authoritative source.
-
-        return null;
-    }
-}
-```
-
-## How verification works
-
-**IP ranges**
-
-The request IP is matched against ranges published by the crawler operator. IPv4 and IPv6 CIDRs are supported.
-
-**FCrDNS**
-
-1. Reverse-resolve the request IP.
-2. Verify the hostname belongs to the crawler.
-3. Resolve the hostname forward.
-4. Confirm the original IP is returned.
+* [Caching](docs/caching.md)
+* [Refreshing IP ranges](docs/refreshing-ip-ranges.md)
+* [Local IP ranges](docs/local-ip-ranges.md)
+* [Custom crawlers](docs/custom-crawlers.md)
+* [How verification works](docs/verification.md)
 
 ## Requirements
 
