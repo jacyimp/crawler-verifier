@@ -6,7 +6,6 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Update;
 
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdateResult;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

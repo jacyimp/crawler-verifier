@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange;
 use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
 use JacyImp\CrawlerVerifier\Catalog\CrawlerDefinition;
 use JacyImp\CrawlerVerifier\IpRange\JsonIpRangeParser;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;

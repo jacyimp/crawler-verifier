@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\IpRange\Update;
 
-use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
-use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
+use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Exception\CrawlerVerifierException;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JacyImp\CrawlerVerifier\Exception\IpRangeUpdateException;
 use JacyImp\CrawlerVerifier\IpRange\JsonIpRangeParser;
@@ -142,7 +142,7 @@ final class IpRangeUpdater
                 $this->refreshFeed($feed);
 
                 $updated[] = $feed->crawler;
-            } catch (CrawlerVerifierException|CacheException $exception) {
+            } catch (CrawlerVerifierException | CacheException $exception) {
                 $errors[$feed->crawler->value] = $exception->getMessage();
             }
         }

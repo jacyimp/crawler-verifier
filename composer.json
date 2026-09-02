@@ -24,7 +24,9 @@
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "2.0"
+        "phpstan/phpstan-phpunit": "2.0",
+        "squizlabs/php_codesniffer": "4.0.4",
+        "slevomat/coding-standard": "8.31.1"
     },
     "autoload": {
         "psr-4": {
@@ -39,11 +41,18 @@
     "scripts": {
         "test": "phpunit",
         "analyse": "phpstan analyse",
+        "cs:check": "phpcs",
+        "cs:fix": "phpcbf",
         "coverage": [
             "phpunit --coverage-clover=coverage.xml",
             "@php tools/check-coverage.php coverage.xml"
         ]
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }

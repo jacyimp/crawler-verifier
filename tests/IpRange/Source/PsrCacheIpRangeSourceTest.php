@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Source;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

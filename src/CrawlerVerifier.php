@@ -15,7 +15,6 @@ use JacyImp\CrawlerVerifier\IpRange\Source\FallbackIpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
-use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
 use Psr\SimpleCache\CacheInterface;
 
 final class CrawlerVerifier

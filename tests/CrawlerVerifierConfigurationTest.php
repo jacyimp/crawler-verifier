@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;

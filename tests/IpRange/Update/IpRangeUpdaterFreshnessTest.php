@@ -7,14 +7,13 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Update;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\IpRangeUpdateException;
+use JacyImp\CrawlerVerifier\IpRange\JsonIpRangeParser;
+use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeFeed;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeFetcher;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdateResult;
-use JacyImp\CrawlerVerifier\IpRange\JsonIpRangeParser;
-use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -245,7 +244,7 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
         array $responses,
         ?IpRangeFetcherState $state = null,
     ): IpRangeFetcher {
-        return new class(
+        return new class (
             $responses,
             $state,
         ) implements IpRangeFetcher {

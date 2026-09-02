@@ -24,7 +24,6 @@ use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
 use JacyImp\CrawlerVerifier\Tests\Support\NativeFunctions;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 use JacyImp\CrawlerVerifier\VerificationResult;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -271,7 +270,7 @@ final class CrawlerVerifierConstructorTest extends TestCase
     private function fetcher(
         array $responses,
     ): IpRangeFetcher {
-        return new class($responses) implements IpRangeFetcher {
+        return new class ($responses) implements IpRangeFetcher {
             /**
              * @param array<string, string> $responses
              */

@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Tests\Exception;
 
 use InvalidArgumentException;
-use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\CrawlerVerifierException;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 use JacyImp\CrawlerVerifier\Exception\IpRangeUpdateException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

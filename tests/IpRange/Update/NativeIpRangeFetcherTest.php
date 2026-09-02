@@ -8,7 +8,6 @@ use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 use JacyImp\CrawlerVerifier\IpRange\Update\NativeIpRangeFetcher;
 use JacyImp\CrawlerVerifier\Tests\Support\NativeFunctions;
 use PHPUnit\Framework\Attributes\After;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;

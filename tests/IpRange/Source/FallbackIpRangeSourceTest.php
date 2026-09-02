@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Source;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\IpRange\Source\FallbackIpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -60,7 +59,7 @@ final class FallbackIpRangeSourceTest extends TestCase
      */
     private function source(?array $ranges): IpRangeSource
     {
-        return new class($ranges) implements IpRangeSource {
+        return new class ($ranges) implements IpRangeSource {
             /**
              * @param list<string>|null $ranges
              */

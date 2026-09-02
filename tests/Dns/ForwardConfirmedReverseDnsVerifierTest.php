@@ -6,7 +6,6 @@ namespace JacyImp\CrawlerVerifier\Tests\Dns;
 
 use JacyImp\CrawlerVerifier\Dns\DnsResolver;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -177,7 +176,7 @@ final class ForwardConfirmedReverseDnsVerifierTest extends TestCase
         ?string $reverse,
         array $forward,
     ): DnsResolver {
-        return new class(
+        return new class (
             $reverse,
             $forward,
         ) implements DnsResolver {

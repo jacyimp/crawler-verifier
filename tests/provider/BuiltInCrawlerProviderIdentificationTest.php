@@ -11,7 +11,6 @@ use JacyImp\CrawlerVerifier\CrawlerIdentity;
 use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;

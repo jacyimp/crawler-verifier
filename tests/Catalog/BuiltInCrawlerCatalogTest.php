@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests\Catalog;
 use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
 use JacyImp\CrawlerVerifier\Catalog\CrawlerDefinition;
 use JacyImp\CrawlerVerifier\Crawler;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;

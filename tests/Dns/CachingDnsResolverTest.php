@@ -8,7 +8,6 @@ use JacyImp\CrawlerVerifier\Dns\CachingDnsResolver;
 use JacyImp\CrawlerVerifier\Dns\DnsResolver;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -286,7 +285,7 @@ final class CachingDnsResolverTest extends TestCase
         ?string $reverse = null,
         array $forward = [],
     ): DnsResolver {
-        return new class(
+        return new class (
             $state,
             $reverse,
             $forward,

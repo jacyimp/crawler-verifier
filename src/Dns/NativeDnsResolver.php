@@ -35,9 +35,11 @@ final class NativeDnsResolver implements DnsResolver
                 $addresses[] = $record['ip'];
             }
 
-            if (isset($record['ipv6']) && is_string($record['ipv6'])) {
-                $addresses[] = $record['ipv6'];
+            if (!isset($record['ipv6']) || !is_string($record['ipv6'])) {
+                continue;
             }
+
+            $addresses[] = $record['ipv6'];
         }
 
         return array_values(array_unique($addresses));

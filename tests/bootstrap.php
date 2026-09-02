@@ -39,9 +39,11 @@ namespace JacyImp\CrawlerVerifier\Dns {
             $normalized = [];
 
             foreach ($record as $key => $value) {
-                if (is_string($key)) {
-                    $normalized[$key] = $value;
+                if (!is_string($key)) {
+                    continue;
                 }
+
+                $normalized[$key] = $value;
             }
 
             $records[] = $normalized;

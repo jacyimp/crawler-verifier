@@ -10,7 +10,6 @@ use JacyImp\CrawlerVerifier\CrawlerVerifier;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 use JacyImp\CrawlerVerifier\VerificationResult;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -246,7 +245,7 @@ final class CrawlerVerifierTest extends TestCase
         string $userAgentFragment,
         ?VerificationMethod $verificationMethod = null,
     ): CrawlerProvider {
-        return new class(
+        return new class (
             $crawler,
             $userAgentFragment,
             $verificationMethod,

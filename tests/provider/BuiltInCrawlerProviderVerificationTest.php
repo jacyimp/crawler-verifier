@@ -14,7 +14,6 @@ use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
 use JacyImp\CrawlerVerifier\VerificationMethod;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -188,7 +187,7 @@ final class BuiltInCrawlerProviderVerificationTest extends TestCase
      */
     private function rangeSource(array $ranges): IpRangeSource
     {
-        return new class($ranges) implements IpRangeSource {
+        return new class ($ranges) implements IpRangeSource {
             /**
              * @param array<string, list<string>> $ranges
              */
@@ -213,7 +212,7 @@ final class BuiltInCrawlerProviderVerificationTest extends TestCase
         ?string $reverse,
         array $forward,
     ): DnsResolver {
-        return new class($reverse, $forward) implements DnsResolver {
+        return new class ($reverse, $forward) implements DnsResolver {
             /**
              * @param list<string> $forward
              */

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Tests\IpRange;
 
 use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
