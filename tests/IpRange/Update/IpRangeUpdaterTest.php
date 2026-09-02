@@ -21,6 +21,7 @@ use JacyImp\CrawlerVerifier\Tests\Support\FaultyCache;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use ReflectionProperty;
 
 #[UsesClass(BuiltInCrawlerCatalog::class)]
@@ -282,16 +283,24 @@ final class IpRangeUpdaterTest extends TestCase
     }
 
     #[Test]
-    public function itUsesTheSuppliedParser(): void
+    public function itConstructsItsParserInternally(): void
     {
-        $parser = new JsonIpRangeParser();
         $updater = new IpRangeUpdater(
             cache: new ArrayCache(),
             feeds: [],
-            parser: $parser,
         );
 
-        self::assertSame($parser, (new ReflectionProperty(IpRangeUpdater::class, 'parser'))->getValue($updater));
+        self::assertSame(
+            ['cache', 'feeds', 'fetcher', 'cacheKeyPrefix'],
+            array_map(
+                static fn (\ReflectionParameter $parameter): string => $parameter->getName(),
+                (new ReflectionMethod(IpRangeUpdater::class, '__construct'))->getParameters(),
+            ),
+        );
+        self::assertInstanceOf(
+            JsonIpRangeParser::class,
+            (new ReflectionProperty(IpRangeUpdater::class, 'parser'))->getValue($updater),
+        );
     }
 
     #[Test]

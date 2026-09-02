@@ -29,7 +29,6 @@ final class IpRangeUpdater
         private readonly CacheInterface $cache,
         ?iterable $feeds = null,
         ?IpRangeFetcher $fetcher = null,
-        ?JsonIpRangeParser $parser = null,
         private readonly string $cacheKeyPrefix = 'crawler_verifier',
     ) {
         if (
@@ -41,7 +40,7 @@ final class IpRangeUpdater
 
         $this->feeds = array_values([...($feeds ?? self::defaultFeeds())]);
         $this->fetcher = $fetcher ?? new NativeIpRangeFetcher();
-        $this->parser = $parser ?? new JsonIpRangeParser();
+        $this->parser = new JsonIpRangeParser();
     }
 
     private readonly IpRangeFetcher $fetcher;
