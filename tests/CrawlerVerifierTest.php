@@ -68,7 +68,7 @@ final class CrawlerVerifierTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertTrue($result->verified);
+        self::assertTrue($result->is_verified);
         self::assertSame(
             Crawler::GPTBot,
             $result->crawler,
@@ -94,7 +94,7 @@ final class CrawlerVerifierTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertFalse($result->verified);
+        self::assertFalse($result->is_verified);
         self::assertNull($result->crawler);
         self::assertNull($result->method);
     }
@@ -114,7 +114,7 @@ final class CrawlerVerifierTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertFalse($result->verified);
+        self::assertFalse($result->is_verified);
         self::assertSame(
             Crawler::GPTBot,
             $result->crawler,
@@ -138,7 +138,7 @@ final class CrawlerVerifierTest extends TestCase
             '192.0.2.42',
         );
 
-        self::assertTrue($result->verified);
+        self::assertTrue($result->is_verified);
         self::assertSame(
             Crawler::Googlebot,
             $result->crawler,
@@ -169,7 +169,7 @@ final class CrawlerVerifierTest extends TestCase
             '192.0.2.42',
         );
 
-        self::assertTrue($result->verified);
+        self::assertTrue($result->is_verified);
         self::assertSame(
             Crawler::Googlebot,
             $result->crawler,
@@ -210,7 +210,7 @@ final class CrawlerVerifierTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertTrue($result->verified);
+        self::assertTrue($result->is_verified);
         self::assertSame($crawler, $result->crawler);
         self::assertSame(
             'my-company-bot',
@@ -232,7 +232,7 @@ final class CrawlerVerifierTest extends TestCase
             '192.0.2.42',
         );
 
-        self::assertFalse($result->verified);
+        self::assertFalse($result->is_verified);
         self::assertSame(
             Crawler::Bingbot,
             $result->crawler,

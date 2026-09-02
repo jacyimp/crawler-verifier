@@ -73,7 +73,7 @@ final class CoverageEdgeCasesTest extends TestCase
         self::assertFalse(
             (new CrawlerVerifier(additionalProviders: [$provider]))
                 ->verifyCrawler($identity, '192.0.2.1')
-                ->verified,
+                ->is_verified,
         );
     }
 
