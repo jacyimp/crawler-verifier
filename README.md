@@ -2,6 +2,7 @@
 
 [![PHPStan level max](https://img.shields.io/badge/PHPStan-level%20max-brightgreen.svg)](https://phpstan.org/)
 [![Coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#)
+[![MSI 100%](https://img.shields.io/badge/MSI-100%25-brightgreen.svg)](#)
 
 Verify that web crawlers are actually who they claim to be.
 
