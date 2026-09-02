@@ -289,8 +289,3 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
         );
     }
 }
-
-final class IpRangeFetcherState
-{
-    public int $fetchCalls = 0;
-}

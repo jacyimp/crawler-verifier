@@ -17,6 +17,9 @@ final class NativeDnsResolver implements DnsResolver
         return rtrim($hostname, '.');
     }
 
+    /**
+     * @return list<string>
+     */
     public function forward(string $hostname): array
     {
         $records = @dns_get_record(

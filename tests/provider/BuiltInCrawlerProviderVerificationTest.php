@@ -196,6 +196,9 @@ final class BuiltInCrawlerProviderVerificationTest extends TestCase
             ) {
             }
 
+            /**
+             * @return list<string>|null
+             */
             public function rangesFor(
                 Crawler $crawler,
             ): ?array {
@@ -228,6 +231,9 @@ final class BuiltInCrawlerProviderVerificationTest extends TestCase
                 return $this->reverse;
             }
 
+            /**
+             * @return list<string>
+             */
             public function forward(
                 string $hostname,
             ): array {

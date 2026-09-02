@@ -68,6 +68,9 @@ final class FallbackIpRangeSourceTest extends TestCase
             ) {
             }
 
+            /**
+             * @return list<string>|null
+             */
             public function rangesFor(Crawler $crawler): ?array
             {
                 return $this->ranges;

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Tests\Support;
 
 use DateInterval;
-use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
-use RuntimeException;
 
 final class FaultyCache implements CacheInterface
 {
@@ -38,6 +36,11 @@ final class FaultyCache implements CacheInterface
     {
         return true;
     }
+    /**
+     * @param iterable<mixed, mixed> $keys
+     *
+     * @return iterable<mixed, mixed>
+     */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         return [];
@@ -47,6 +50,9 @@ final class FaultyCache implements CacheInterface
     {
         return true;
     }
+    /**
+     * @param iterable<mixed, mixed> $keys
+     */
     public function deleteMultiple(iterable $keys): bool
     {
         return true;
@@ -55,7 +61,4 @@ final class FaultyCache implements CacheInterface
     {
         return false;
     }
-}
-final class FaultyCacheException extends RuntimeException implements CacheException
-{
 }

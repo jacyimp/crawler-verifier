@@ -16,6 +16,9 @@ final readonly class PsrCacheIpRangeSource implements IpRangeSource
     ) {
     }
 
+    /**
+     * @return list<string>|null
+     */
     public function rangesFor(Crawler $crawler): ?array
     {
         $entry = $this->entryFor($crawler);

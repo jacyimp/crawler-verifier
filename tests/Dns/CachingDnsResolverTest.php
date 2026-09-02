@@ -308,6 +308,9 @@ final class CachingDnsResolverTest extends TestCase
                 return $this->reverse;
             }
 
+            /**
+             * @return list<string>
+             */
             public function forward(
                 string $hostname,
             ): array {
@@ -317,11 +320,4 @@ final class CachingDnsResolverTest extends TestCase
             }
         };
     }
-}
-
-final class DnsResolverState
-{
-    public int $reverseCalls = 0;
-
-    public int $forwardCalls = 0;
 }

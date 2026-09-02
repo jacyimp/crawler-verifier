@@ -165,6 +165,9 @@ final class BuiltInCrawlerProviderIdentificationTest extends TestCase
     private function rangeSource(): IpRangeSource
     {
         return new class implements IpRangeSource {
+            /**
+             * @return list<string>|null
+             */
             public function rangesFor(
                 Crawler $crawler,
             ): ?array {

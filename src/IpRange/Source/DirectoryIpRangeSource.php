@@ -16,6 +16,9 @@ final readonly class DirectoryIpRangeSource implements IpRangeSource
     ) {
     }
 
+    /**
+     * @return list<string>|null
+     */
     public function rangesFor(Crawler $crawler): ?array
     {
         $path = sprintf(

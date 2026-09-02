@@ -195,6 +195,9 @@ final class ForwardConfirmedReverseDnsVerifierTest extends TestCase
                 return $this->reverse;
             }
 
+            /**
+             * @return list<string>
+             */
             public function forward(
                 string $hostname,
             ): array {

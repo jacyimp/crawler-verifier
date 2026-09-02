@@ -21,6 +21,9 @@ final class FallbackIpRangeSource implements IpRangeSource
         $this->sources = array_values([...$sources]);
     }
 
+    /**
+     * @return list<string>|null
+     */
     public function rangesFor(Crawler $crawler): ?array
     {
         foreach ($this->sources as $source) {

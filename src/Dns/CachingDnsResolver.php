@@ -70,6 +70,9 @@ final readonly class CachingDnsResolver implements DnsResolver
         return $hostname;
     }
 
+    /**
+     * @return list<string>
+     */
     public function forward(string $hostname): array
     {
         $key = sprintf(
