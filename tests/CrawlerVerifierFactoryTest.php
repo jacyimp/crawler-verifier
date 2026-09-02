@@ -67,11 +67,12 @@ final class CrawlerVerifierFactoryTest extends TestCase
         $cache = new ArrayCache();
 
         $cache->set(
-            PsrCacheIpRangeSource::rangesKey(
+            PsrCacheIpRangeSource::key(
                 Crawler::GPTBot,
             ),
             [
-                '192.0.2.0/24',
+                'ranges' => ['192.0.2.0/24'],
+                'refreshed_at' => time(),
             ],
         );
 
@@ -99,12 +100,13 @@ final class CrawlerVerifierFactoryTest extends TestCase
         $cache = new ArrayCache();
 
         $cache->set(
-            PsrCacheIpRangeSource::rangesKey(
+            PsrCacheIpRangeSource::key(
                 Crawler::GPTBot,
                 'my_app',
             ),
             [
-                '192.0.2.0/24',
+                'ranges' => ['192.0.2.0/24'],
+                'refreshed_at' => time(),
             ],
         );
 
@@ -149,11 +151,12 @@ final class CrawlerVerifierFactoryTest extends TestCase
             );
 
             $cache->set(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
                 [
-                    '203.0.113.0/24',
+                    'ranges' => ['203.0.113.0/24'],
+                    'refreshed_at' => time(),
                 ],
             );
 
