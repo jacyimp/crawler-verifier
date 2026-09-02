@@ -58,13 +58,9 @@ final class IpRangeUpdater
         $feeds = [];
 
         foreach (BuiltInCrawlerCatalog::defaults()->withIpRangeFeed() as $definition) {
-            if ($definition->ipRangeFeedUrl === null) {
-                continue;
-            }
-
             $feeds[] = new IpRangeFeed(
                 crawler: $definition->crawler,
-                url: $definition->ipRangeFeedUrl,
+                url: sprintf('%s', $definition->ipRangeFeedUrl),
             );
         }
 

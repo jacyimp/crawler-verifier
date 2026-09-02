@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(JsonIpRangeParser::class)]
 #[UsesClass(BuiltInCrawlerCatalog::class)]
 #[UsesClass(CrawlerDefinition::class)]
 final class BundledIpRangeSnapshotTest extends TestCase

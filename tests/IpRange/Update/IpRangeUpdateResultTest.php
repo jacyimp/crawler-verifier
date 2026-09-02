@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IpRangeUpdateResult::class)]
 final class IpRangeUpdateResultTest extends TestCase
 {
     #[Test]

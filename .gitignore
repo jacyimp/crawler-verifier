@@ -4,3 +4,4 @@
 composer.lock
 .idea
 .phpcs.cache
+coverage.xml

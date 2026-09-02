@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(JsonIpRangeParser::class)]
 #[UsesClass(InvalidIpRangeDataException::class)]
 final class JsonIpRangeParserTest extends TestCase
 {

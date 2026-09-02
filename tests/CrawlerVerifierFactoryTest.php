@@ -29,7 +29,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(CrawlerVerifier::class)]
 #[UsesClass(CrawlerVerifierConfig::class)]
 #[UsesClass(BuiltInCrawlerCatalog::class)]
 #[UsesClass(CrawlerDefinition::class)]

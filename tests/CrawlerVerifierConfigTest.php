@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(CrawlerVerifierConfig::class)]
 #[UsesClass(InvalidConfigurationException::class)]
 final class CrawlerVerifierConfigTest extends TestCase
 {

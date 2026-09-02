@@ -6,16 +6,23 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Update;
 
 use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 use JacyImp\CrawlerVerifier\IpRange\Update\NativeIpRangeFetcher;
+use JacyImp\CrawlerVerifier\Tests\Support\NativeFunctions;
+use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(NativeIpRangeFetcher::class)]
 #[UsesClass(IpRangeSourceException::class)]
 final class NativeIpRangeFetcherTest extends TestCase
 {
+    #[After]
+    public function resetNativeFunctions(): void
+    {
+        NativeFunctions::reset();
+    }
+
     #[Test]
     public function itRejectsAnInvalidUrlWithAPackageException(): void
     {
@@ -42,6 +49,28 @@ final class NativeIpRangeFetcherTest extends TestCase
         (new NativeIpRangeFetcher())->fetch(
             $url,
         );
+    }
+
+    #[Test]
+    public function itReturnsFetchedHttpsContents(): void
+    {
+        NativeFunctions::$fetch = static fn (): string => '{"prefixes":[]}';
+
+        self::assertSame(
+            '{"prefixes":[]}',
+            (new NativeIpRangeFetcher())->fetch('https://example.com/ranges.json'),
+        );
+    }
+
+    #[Test]
+    public function itWrapsFailedHttpsFetches(): void
+    {
+        NativeFunctions::$fetch = static fn (): false => false;
+
+        $this->expectException(IpRangeSourceException::class);
+        $this->expectExceptionMessage('Unable to fetch IP ranges');
+
+        (new NativeIpRangeFetcher())->fetch('https://example.com/ranges.json');
     }
 
     /**

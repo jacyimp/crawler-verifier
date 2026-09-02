@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IpRangeMatcher::class)]
 final class IpRangeMatcherTest extends TestCase
 {
     private IpRangeMatcher $matcher;

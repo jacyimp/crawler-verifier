@@ -1,5 +1,8 @@
 # Crawler Verifier
 
+[![PHPStan level max](https://img.shields.io/badge/PHPStan-level%20max-brightgreen.svg)](https://phpstan.org/)
+[![codecov](https://codecov.io/gh/jacyimp/crawler-verifier/branch/main/graph/badge.svg)](https://codecov.io/gh/jacyimp/crawler-verifier)
+
 Verify that web crawlers are actually who they claim to be.
 
 A `User-Agent` can be spoofed. Crawler Verifier checks the claimed crawler against official IP ranges or forward-confirmed reverse DNS.

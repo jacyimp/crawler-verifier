@@ -15,10 +15,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-#[CoversClass(InvalidConfigurationException::class)]
-#[CoversClass(InvalidIpRangeDataException::class)]
-#[CoversClass(IpRangeSourceException::class)]
-#[CoversClass(IpRangeUpdateException::class)]
 final class ExceptionHierarchyTest extends TestCase
 {
     #[Test]

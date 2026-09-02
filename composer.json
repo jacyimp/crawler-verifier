@@ -38,7 +38,11 @@
     },
     "scripts": {
         "test": "phpunit",
-        "analyse": "phpstan analyse"
+        "analyse": "phpstan analyse",
+        "coverage": [
+            "phpunit --coverage-clover=coverage.xml",
+            "@php tools/check-coverage.php coverage.xml"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true

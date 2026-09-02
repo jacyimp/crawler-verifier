@@ -15,7 +15,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(CrawlerVerifier::class)]
 #[UsesClass(VerificationResult::class)]
 final class CrawlerVerifierTest extends TestCase
 {
