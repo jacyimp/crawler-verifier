@@ -44,6 +44,15 @@ final class ExceptionHierarchyTest extends TestCase
     }
 
     #[Test]
+    public function itDescribesTheCacheRequiredForIpRangeRefreshConfigurationError(): void
+    {
+        self::assertSame(
+            'A PSR-16 cache is required to refresh IP ranges.',
+            InvalidConfigurationException::cacheRequiredForIpRangeRefresh()->getMessage(),
+        );
+    }
+
+    #[Test]
     public function itKeepsOperationalExceptionsCompatibleWithRuntimeException(): void
     {
         $exceptions = [
