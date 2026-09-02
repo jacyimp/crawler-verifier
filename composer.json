@@ -26,7 +26,8 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "2.0",
         "squizlabs/php_codesniffer": "4.0.4",
-        "slevomat/coding-standard": "8.31.1"
+        "slevomat/coding-standard": "8.31.1",
+        "infection/infection": "0.31"
     },
     "autoload": {
         "psr-4": {
@@ -52,7 +53,8 @@
     "prefer-stable": true,
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true
         }
     }
 }

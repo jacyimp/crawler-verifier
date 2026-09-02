@@ -39,12 +39,16 @@ final class NativeDnsResolverTest extends TestCase
     #[Test]
     public function itReturnsUniqueIpv4AndIpv6ForwardResults(): void
     {
-        NativeFunctions::$forward = static fn (string $hostname, int $type): array => [
-            ['ip' => '192.0.2.1'],
-            ['ipv6' => '2001:db8::1'],
-            ['ip' => '192.0.2.1'],
-            ['ip' => 123, 'ipv6' => false],
-        ];
+        NativeFunctions::$forward = static function (string $hostname, int $type): array {
+            self::assertSame(DNS_A | DNS_AAAA, $type);
+
+            return [
+                ['ip' => '192.0.2.1'],
+                ['ip' => '192.0.2.1'],
+                ['ipv6' => '2001:db8::1'],
+                ['ip' => 123, 'ipv6' => false],
+            ];
+        };
 
         self::assertSame(
             ['192.0.2.1', '2001:db8::1'],

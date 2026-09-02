@@ -86,12 +86,6 @@ final class IpRangeUpdater
             $crawler,
         );
 
-        if ($crawler !== null && $feeds === []) {
-            return $this->unsupportedCrawlerResult(
-                $crawler,
-            );
-        }
-
         $stale = [];
         $skipped = [];
 
@@ -112,6 +106,7 @@ final class IpRangeUpdater
 
         $result = $this->refreshFeeds(
             feeds: $stale,
+            crawler: $crawler,
         );
 
         return new IpRangeUpdateResult(

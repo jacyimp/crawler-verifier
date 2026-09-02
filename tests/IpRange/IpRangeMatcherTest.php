@@ -76,6 +76,13 @@ final class IpRangeMatcherTest extends TestCase
     }
 
     #[Test]
+    public function itRejectsMalformedRangesWithoutTreatingThemAsWildcardPrefixes(): void
+    {
+        self::assertFalse($this->matcher->contains('0.0.0.0', '0.0.0.0/not-a-prefix'));
+        self::assertFalse($this->matcher->contains('0.0.0.0', '0.0.0.0'));
+    }
+
+    #[Test]
     #[DataProvider('invalidPrefixLengths')]
     public function itRejectsAnInvalidPrefixLength(string $ip, string $range): void
     {
@@ -150,6 +157,16 @@ final class IpRangeMatcherTest extends TestCase
         yield 'IPv4 outside /28' => [
             '192.0.2.32',
             '192.0.2.0/28',
+        ];
+
+        yield 'IPv4 outside /1 differing in the highest bit' => [
+            '128.0.0.0',
+            '0.0.0.0/1',
+        ];
+
+        yield 'IPv4 outside /7 differing in a masked low bit' => [
+            '2.0.0.0',
+            '0.0.0.0/7',
         ];
 
         yield 'IPv4 exact mismatch' => [

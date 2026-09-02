@@ -37,7 +37,7 @@ final class JsonIpRangeParser
 
         foreach ($data['prefixes'] as $prefix) {
             if (!is_array($prefix)) {
-                throw InvalidIpRangeDataException::invalidPrefix();
+                $prefix = [];
             }
 
             $range = $prefix['ipv4Prefix']

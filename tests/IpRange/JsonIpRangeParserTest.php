@@ -87,6 +87,15 @@ final class JsonIpRangeParserTest extends TestCase
     }
 
     #[Test]
+    public function itRejectsANonObjectPrefix(): void
+    {
+        $this->expectException(InvalidIpRangeDataException::class);
+        $this->expectExceptionMessage('Invalid IP range prefix.');
+
+        (new JsonIpRangeParser())->parse('{"prefixes":["192.0.2.0/24"]}');
+    }
+
+    #[Test]
     public function itRejectsAnInvalidPrefixLength(): void
     {
         $parser = new JsonIpRangeParser();

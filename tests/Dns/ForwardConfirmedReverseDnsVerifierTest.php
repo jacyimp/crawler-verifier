@@ -52,6 +52,28 @@ final class ForwardConfirmedReverseDnsVerifierTest extends TestCase
     }
 
     #[Test]
+    public function itMatchesHostnamesAndSuffixesCaseInsensitively(): void
+    {
+        $verifier = new ForwardConfirmedReverseDnsVerifier($this->resolver(
+            reverse: 'CRAWL.GOOGLEBOT.COM',
+            forward: ['66.249.66.1'],
+        ));
+
+        self::assertTrue($verifier->verify('66.249.66.1', ['GOOGLEBOT.COM']));
+    }
+
+    #[Test]
+    public function itAcceptsDotsAroundAnAllowedSuffix(): void
+    {
+        $verifier = new ForwardConfirmedReverseDnsVerifier($this->resolver(
+            reverse: 'crawl.googlebot.com',
+            forward: ['66.249.66.1'],
+        ));
+
+        self::assertTrue($verifier->verify('66.249.66.1', ['.googlebot.com.']));
+    }
+
+    #[Test]
     public function itRejectsAHostnameOutsideTheAllowedSuffix(): void
     {
         $verifier = new ForwardConfirmedReverseDnsVerifier(

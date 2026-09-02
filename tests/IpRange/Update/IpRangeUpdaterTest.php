@@ -17,9 +17,11 @@ use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeFetcher;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdateResult;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
+use JacyImp\CrawlerVerifier\Tests\Support\FaultyCache;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 #[UsesClass(BuiltInCrawlerCatalog::class)]
 #[UsesClass(CrawlerDefinition::class)]
@@ -261,6 +263,62 @@ final class IpRangeUpdaterTest extends TestCase
                 Crawler::PinterestBot,
             ),
         );
+    }
+
+    #[Test]
+    public function itRefreshesAllDefaultFeeds(): void
+    {
+        $result = (new IpRangeUpdater(
+            cache: new ArrayCache(),
+            fetcher: new class implements IpRangeFetcher {
+                public function fetch(string $url): string
+                {
+                    return '{"prefixes":[{"ipv4Prefix":"192.0.2.0/24"}]}';
+                }
+            },
+        ))->refresh();
+
+        self::assertGreaterThan(1, count($result->updated));
+    }
+
+    #[Test]
+    public function itUsesTheSuppliedParser(): void
+    {
+        $parser = new JsonIpRangeParser();
+        $updater = new IpRangeUpdater(
+            cache: new ArrayCache(),
+            feeds: [],
+            parser: $parser,
+        );
+
+        self::assertSame($parser, (new ReflectionProperty(IpRangeUpdater::class, 'parser'))->getValue($updater));
+    }
+
+    #[Test]
+    public function itReportsCacheExceptionsPerFeedAndContinues(): void
+    {
+        $updater = new IpRangeUpdater(
+            cache: new FaultyCache(),
+            feeds: [new IpRangeFeed(Crawler::GPTBot, 'https://example.com')],
+            fetcher: $this->fetcher(['https://example.com' => $this->rangesJson('192.0.2.0/24')]),
+        );
+
+        self::assertTrue($updater->refresh()->failed(Crawler::GPTBot));
+    }
+
+    #[Test]
+    public function itReindexesSuppliedFeedsWhenSelectingOne(): void
+    {
+        $feeds = (static function (): iterable {
+            yield 4 => new IpRangeFeed(Crawler::GPTBot, 'https://example.com');
+        })();
+        $updater = new IpRangeUpdater(
+            cache: new ArrayCache(),
+            feeds: $feeds,
+            fetcher: $this->fetcher(['https://example.com' => $this->rangesJson('192.0.2.0/24')]),
+        );
+
+        self::assertTrue($updater->refresh(Crawler::GPTBot)->wasUpdated(Crawler::GPTBot));
     }
 
     #[Test]

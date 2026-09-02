@@ -11,10 +11,20 @@ use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 #[UsesClass(InvalidConfigurationException::class)]
 final class CachingDnsResolverTest extends TestCase
 {
+    #[Test]
+    public function itKeepsDocumentedDefaultTtls(): void
+    {
+        $parameters = (new ReflectionMethod(CachingDnsResolver::class, '__construct'))->getParameters();
+
+        self::assertSame(3600, $parameters[2]->getDefaultValue());
+        self::assertSame(300, $parameters[3]->getDefaultValue());
+    }
+
     #[Test]
     public function itCachesAReverseDnsResult(): void
     {
@@ -98,6 +108,49 @@ final class CachingDnsResolverTest extends TestCase
             1,
             $state->forwardCalls,
         );
+    }
+
+    #[Test]
+    public function itReturnsAndCachesEveryForwardAddressAsAList(): void
+    {
+        $cache = new ArrayCache();
+        $resolver = new CachingDnsResolver(
+            resolver: $this->resolver(
+                state: $this->state(),
+                forward: ['192.0.2.1', '192.0.2.2'],
+            ),
+            cache: $cache,
+        );
+
+        self::assertSame(['192.0.2.1', '192.0.2.2'], $resolver->forward('example.com'));
+
+        $key = 'crawler_verifier.dns.forward.' . hash('sha256', 'example.com');
+        $cache->set($key, [2 => '192.0.2.3', 4 => '192.0.2.4']);
+
+        self::assertSame(['192.0.2.3', '192.0.2.4'], $resolver->forward('example.com'));
+    }
+
+    #[Test]
+    public function itUsesSeparatePositiveAndNegativeForwardTtls(): void
+    {
+        $positiveCache = new ArrayCache();
+        (new CachingDnsResolver(
+            $this->resolver($this->state(), forward: ['192.0.2.1']),
+            $positiveCache,
+            positiveTtlSeconds: 17,
+            negativeTtlSeconds: 23,
+        ))->forward('positive.example');
+
+        $negativeCache = new ArrayCache();
+        (new CachingDnsResolver(
+            $this->resolver($this->state()),
+            $negativeCache,
+            positiveTtlSeconds: 17,
+            negativeTtlSeconds: 23,
+        ))->forward('negative.example');
+
+        self::assertSame([17], $positiveCache->recordedTtls());
+        self::assertSame([23], $negativeCache->recordedTtls());
     }
 
     #[Test]

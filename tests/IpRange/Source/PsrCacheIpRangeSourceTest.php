@@ -81,6 +81,21 @@ final class PsrCacheIpRangeSourceTest extends TestCase
     }
 
     #[Test]
+    public function itNormalizesCachedRangeKeys(): void
+    {
+        $cache = new ArrayCache();
+        $cache->set(PsrCacheIpRangeSource::key(Crawler::GPTBot), [
+            'ranges' => [2 => '192.0.2.0/24', 5 => '2001:db8::/32'],
+            'refreshed_at' => 123,
+        ]);
+
+        self::assertSame(
+            ['ranges' => ['192.0.2.0/24', '2001:db8::/32'], 'refreshed_at' => 123],
+            (new PsrCacheIpRangeSource($cache))->entryFor(Crawler::GPTBot),
+        );
+    }
+
+    #[Test]
     public function itUsesTheConfiguredCacheKeyPrefix(): void
     {
         $cache = new ArrayCache();

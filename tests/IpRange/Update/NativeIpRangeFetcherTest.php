@@ -28,6 +28,7 @@ final class NativeIpRangeFetcherTest extends TestCase
         $this->expectException(
             IpRangeSourceException::class,
         );
+        $this->expectExceptionMessage('Invalid IP range URL');
 
         (new NativeIpRangeFetcher())->fetch(
             'definitely-not-a-url',
@@ -53,12 +54,33 @@ final class NativeIpRangeFetcherTest extends TestCase
     #[Test]
     public function itReturnsFetchedHttpsContents(): void
     {
-        NativeFunctions::$fetch = static fn (): string => '{"prefixes":[]}';
+        NativeFunctions::$fetch = static function (string $url, bool $useIncludePath, mixed $context): string {
+            self::assertSame('https://example.com/ranges.json', $url);
+            self::assertFalse($useIncludePath);
+            self::assertIsResource($context);
+            self::assertSame([
+                'http' => [
+                    'timeout' => 10,
+                    'follow_location' => 1,
+                    'user_agent' => 'jacyimp/crawler-verifier',
+                ],
+            ], stream_context_get_options($context));
+
+            return '{"prefixes":[]}';
+        };
 
         self::assertSame(
             '{"prefixes":[]}',
             (new NativeIpRangeFetcher())->fetch('https://example.com/ranges.json'),
         );
+    }
+
+    #[Test]
+    public function itAcceptsAnUppercaseHttpsScheme(): void
+    {
+        NativeFunctions::$fetch = static fn (): string => '{}';
+
+        self::assertSame('{}', (new NativeIpRangeFetcher())->fetch('HTTPS://example.com/ranges.json'));
     }
 
     #[Test]

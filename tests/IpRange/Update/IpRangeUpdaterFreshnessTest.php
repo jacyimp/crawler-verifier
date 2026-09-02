@@ -214,6 +214,77 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
         )->refreshIfStale(-1);
     }
 
+    #[Test]
+    public function itAllowsAZeroMaximumAge(): void
+    {
+        $result = $this->updater(new ArrayCache(), [
+            'https://example.com/gptbot.json' => $this->rangesJson('192.0.2.0/24'),
+        ])->refreshIfStale(0);
+
+        self::assertTrue($result->wasUpdated(Crawler::GPTBot));
+    }
+
+    #[Test]
+    public function itChecksEveryFeedAfterSkippingAFreshOne(): void
+    {
+        $cache = new ArrayCache();
+        $cache->set(PsrCacheIpRangeSource::key(Crawler::GPTBot), [
+            'ranges' => ['192.0.2.0/24'],
+            'refreshed_at' => time(),
+        ]);
+        $updater = new IpRangeUpdater(
+            cache: $cache,
+            feeds: [
+                new IpRangeFeed(Crawler::GPTBot, 'https://example.com/gptbot.json'),
+                new IpRangeFeed(Crawler::OaiSearchBot, 'https://example.com/searchbot.json'),
+            ],
+            fetcher: $this->fetcher([
+                'https://example.com/searchbot.json' => $this->rangesJson('203.0.113.0/24'),
+            ]),
+        );
+
+        $result = $updater->refreshIfStale(3600);
+
+        self::assertTrue($result->wasSkipped(Crawler::GPTBot));
+        self::assertTrue($result->wasUpdated(Crawler::OaiSearchBot));
+    }
+
+    #[Test]
+    public function itRefreshesAllStaleFeedsWhenNoCrawlerIsSpecified(): void
+    {
+        $updater = new IpRangeUpdater(
+            cache: new ArrayCache(),
+            feeds: [
+                new IpRangeFeed(Crawler::GPTBot, 'https://example.com/gptbot.json'),
+                new IpRangeFeed(Crawler::OaiSearchBot, 'https://example.com/searchbot.json'),
+            ],
+            fetcher: $this->fetcher([
+                'https://example.com/gptbot.json' => $this->rangesJson('192.0.2.0/24'),
+                'https://example.com/searchbot.json' => $this->rangesJson('203.0.113.0/24'),
+            ]),
+        );
+
+        $result = $updater->refreshIfStale(3600);
+
+        self::assertSame([Crawler::GPTBot, Crawler::OaiSearchBot], $result->updated);
+    }
+
+    #[Test]
+    public function itTreatsTheExactAgeBoundaryAsStale(): void
+    {
+        $cache = new ArrayCache();
+        $cache->set(PsrCacheIpRangeSource::key(Crawler::GPTBot), [
+            'ranges' => ['192.0.2.0/24'],
+            'refreshed_at' => time(),
+        ]);
+
+        $result = $this->updater($cache, [
+            'https://example.com/gptbot.json' => $this->rangesJson('203.0.113.0/24'),
+        ])->refreshIfStale(0);
+
+        self::assertTrue($result->wasUpdated(Crawler::GPTBot));
+    }
+
     /**
      * @param array<string, string> $responses
      */

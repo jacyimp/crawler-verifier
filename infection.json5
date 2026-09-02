@@ -1,0 +1,37 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "threads": 12,
+    "source": {
+        "directories": [
+            "src/"
+        ]
+    },
+    "mutators": {
+        "@default": true,
+        "ReturnRemoval": {
+            "ignore": [
+                "JacyImp\\CrawlerVerifier\\Dns\\ForwardConfirmedReverseDnsVerifier::verify",
+                "JacyImp\\CrawlerVerifier\\IpRange\\IpRangeMatcher::contains"
+            ]
+        },
+        "IncrementInteger": {
+            "ignore": ["JacyImp\\CrawlerVerifier\\IpRange\\IpRangeMatcher::parseRange"]
+        },
+        "DecrementInteger": {
+            "ignore": [
+                "JacyImp\\CrawlerVerifier\\IpRange\\IpRangeMatcher::contains",
+                "JacyImp\\CrawlerVerifier\\IpRange\\IpRangeMatcher::parseRange"
+            ]
+        },
+        "BitwiseAnd": {
+            "ignore": ["JacyImp\\CrawlerVerifier\\IpRange\\IpRangeMatcher::contains"]
+        },
+        "UnwrapArrayValues": {
+            "ignore": [
+                "JacyImp\\CrawlerVerifier\\Catalog\\BuiltInCrawlerCatalog::withIpRangeFeed",
+                "JacyImp\\CrawlerVerifier\\IpRange\\Update\\IpRangeUpdater::__construct",
+                "JacyImp\\CrawlerVerifier\\IpRange\\Update\\IpRangeUpdater::resolveFeeds"
+            ]
+        }
+    }
+}
