@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Dns;
 
+/**
+ * @internal
+ */
 final readonly class ForwardConfirmedReverseDnsVerifier
 {
     public function __construct(

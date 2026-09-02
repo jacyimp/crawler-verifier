@@ -9,6 +9,9 @@ use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
 use stdClass;
 
+/**
+ * @internal
+ */
 final readonly class CachingDnsResolver implements DnsResolver
 {
     public function __construct(

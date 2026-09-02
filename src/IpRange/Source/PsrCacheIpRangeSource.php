@@ -8,6 +8,9 @@ use JacyImp\CrawlerVerifier\Crawler;
 use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * @internal
+ */
 final readonly class PsrCacheIpRangeSource implements IpRangeSource
 {
     public function __construct(

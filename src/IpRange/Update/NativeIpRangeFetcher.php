@@ -6,6 +6,9 @@ namespace JacyImp\CrawlerVerifier\IpRange\Update;
 
 use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 
+/**
+ * @internal
+ */
 final class NativeIpRangeFetcher implements IpRangeFetcher
 {
     public function fetch(string $url): string

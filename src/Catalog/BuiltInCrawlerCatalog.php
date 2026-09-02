@@ -6,6 +6,9 @@ namespace JacyImp\CrawlerVerifier\Catalog;
 
 use JacyImp\CrawlerVerifier\Crawler;
 
+/**
+ * @internal
+ */
 final class BuiltInCrawlerCatalog
 {
     /**

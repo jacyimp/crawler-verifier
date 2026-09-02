@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Dns;
 
+/**
+ * @internal
+ */
 final class NativeDnsResolver implements DnsResolver
 {
     public function reverse(string $ip): ?string

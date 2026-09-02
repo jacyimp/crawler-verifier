@@ -6,6 +6,9 @@ namespace JacyImp\CrawlerVerifier\IpRange\Source;
 
 use JacyImp\CrawlerVerifier\Crawler;
 
+/**
+ * @internal
+ */
 final class FallbackIpRangeSource implements IpRangeSource
 {
     /**

@@ -7,6 +7,9 @@ namespace JacyImp\CrawlerVerifier\IpRange;
 use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JsonException;
 
+/**
+ * @internal
+ */
 final class JsonIpRangeParser
 {
     /**

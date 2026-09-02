@@ -13,6 +13,9 @@ use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 
+/**
+ * @internal
+ */
 final readonly class BuiltInCrawlerProvider implements CrawlerProvider
 {
     public function __construct(

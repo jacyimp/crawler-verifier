@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\IpRange;
 
+/**
+ * @internal
+ */
 final class IpRangeMatcher
 {
     /**

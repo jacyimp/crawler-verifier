@@ -8,6 +8,9 @@ use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Exception\IpRangeSourceException;
 use JacyImp\CrawlerVerifier\IpRange\JsonIpRangeParser;
 
+/**
+ * @internal
+ */
 final readonly class DirectoryIpRangeSource implements IpRangeSource
 {
     public function __construct(
