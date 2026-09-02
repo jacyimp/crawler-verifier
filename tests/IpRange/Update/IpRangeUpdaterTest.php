@@ -58,7 +58,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get(
+            $cache->getArray(
                 PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
@@ -66,7 +66,7 @@ final class IpRangeUpdaterTest extends TestCase
         );
 
         self::assertIsInt(
-            $cache->get(
+            $cache->getArray(
                 PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
@@ -93,7 +93,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get(
+            $cache->getArray(
                 PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                     'my_app',
@@ -184,7 +184,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get($key)['ranges'],
+            $cache->getArray($key)['ranges'],
         );
     }
 
@@ -220,7 +220,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get($key)['ranges'],
+            $cache->getArray($key)['ranges'],
         );
     }
 

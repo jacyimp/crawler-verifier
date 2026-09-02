@@ -10,7 +10,7 @@ final class NativeIpRangeFetcher implements IpRangeFetcher
 {
     public function fetch(string $url): string
     {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw IpRangeSourceException::invalidUrl($url);
         }
 

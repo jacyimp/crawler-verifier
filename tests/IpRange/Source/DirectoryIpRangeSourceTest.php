@@ -26,8 +26,12 @@ final class DirectoryIpRangeSourceTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (glob($this->directory . '/*') ?: [] as $file) {
-            unlink($file);
+        $files = glob($this->directory . '/*');
+
+        if ($files !== false) {
+            foreach ($files as $file) {
+                unlink($file);
+            }
         }
 
         rmdir($this->directory);

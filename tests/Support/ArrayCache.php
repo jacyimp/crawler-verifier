@@ -6,6 +6,7 @@ namespace JacyImp\CrawlerVerifier\Tests\Support;
 
 use DateInterval;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 
 final class ArrayCache implements CacheInterface
@@ -85,13 +86,20 @@ final class ArrayCache implements CacheInterface
         return $values;
     }
 
+    /**
+     * @param iterable<mixed, mixed> $values
+     */
     public function setMultiple(
         iterable $values,
         null|int|DateInterval $ttl = null,
     ): bool {
         foreach ($values as $key => $value) {
+            if (!is_string($key)) {
+                throw new InvalidArgumentException('Cache keys must be strings.');
+            }
+
             $this->set(
-                (string) $key,
+                $key,
                 $value,
                 $ttl,
             );
@@ -100,12 +108,29 @@ final class ArrayCache implements CacheInterface
         return true;
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public function getArray(string $key): array
+    {
+        $value = $this->get($key);
+
+        if (!is_array($value)) {
+            throw new \UnexpectedValueException(sprintf(
+                'Cache value for "%s" is not an array.',
+                $key,
+            ));
+        }
+
+        return $value;
+    }
+
     public function deleteMultiple(
         iterable $keys,
     ): bool {
         foreach ($keys as $key) {
             $this->delete(
-                (string) $key,
+                $key,
             );
         }
 

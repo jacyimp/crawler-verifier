@@ -33,7 +33,7 @@ final class IpRangeUpdater
         private readonly JsonIpRangeParser $parser = new JsonIpRangeParser(),
         private readonly string $cacheKeyPrefix = 'crawler_verifier',
     ) {
-        $this->feeds = [...$feeds];
+        $this->feeds = array_values([...$feeds]);
     }
 
     public static function create(

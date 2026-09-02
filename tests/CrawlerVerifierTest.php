@@ -216,7 +216,7 @@ final class CrawlerVerifierTest extends TestCase
         self::assertSame($crawler, $result->crawler);
         self::assertSame(
             'my-company-bot',
-            $result->crawler?->id(),
+            $result->crawler->id(),
         );
         self::assertSame(
             VerificationMethod::IpRange,

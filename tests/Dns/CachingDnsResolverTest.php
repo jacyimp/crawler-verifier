@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 #[CoversClass(CachingDnsResolver::class)]
 #[UsesClass(InvalidConfigurationException::class)]
@@ -275,19 +274,16 @@ final class CachingDnsResolverTest extends TestCase
         );
     }
 
-    private function state(): stdClass
+    private function state(): DnsResolverState
     {
-        return (object) [
-            'reverseCalls' => 0,
-            'forwardCalls' => 0,
-        ];
+        return new DnsResolverState();
     }
 
     /**
      * @param list<string> $forward
      */
     private function resolver(
-        stdClass $state,
+        DnsResolverState $state,
         ?string $reverse = null,
         array $forward = [],
     ): DnsResolver {
@@ -300,7 +296,7 @@ final class CachingDnsResolverTest extends TestCase
              * @param list<string> $forward
              */
             public function __construct(
-                private readonly stdClass $state,
+                private readonly DnsResolverState $state,
                 private readonly ?string $reverse,
                 private readonly array $forward,
             ) {
@@ -323,4 +319,11 @@ final class CachingDnsResolverTest extends TestCase
             }
         };
     }
+}
+
+final class DnsResolverState
+{
+    public int $reverseCalls = 0;
+
+    public int $forwardCalls = 0;
 }

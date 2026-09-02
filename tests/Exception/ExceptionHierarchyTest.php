@@ -32,20 +32,20 @@ final class ExceptionHierarchyTest extends TestCase
         ];
 
         foreach ($exceptions as $exception) {
-            self::assertInstanceOf(
+            self::assertTrue($this->inherits(
                 CrawlerVerifierException::class,
                 $exception,
-            );
+            ));
         }
     }
 
     #[Test]
     public function itKeepsInvalidConfigurationExceptionsCompatibleWithInvalidArgumentException(): void
     {
-        self::assertInstanceOf(
+        self::assertTrue($this->inherits(
             InvalidArgumentException::class,
             new InvalidConfigurationException('Configuration failed.'),
-        );
+        ));
     }
 
     #[Test]
@@ -58,10 +58,18 @@ final class ExceptionHierarchyTest extends TestCase
         ];
 
         foreach ($exceptions as $exception) {
-            self::assertInstanceOf(
+            self::assertTrue($this->inherits(
                 RuntimeException::class,
                 $exception,
-            );
+            ));
         }
+    }
+
+    /**
+     * @param class-string $parent
+     */
+    private function inherits(string $parent, object $object): bool
+    {
+        return is_a($object, $parent);
     }
 }

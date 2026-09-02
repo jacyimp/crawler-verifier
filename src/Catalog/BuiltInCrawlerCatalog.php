@@ -18,7 +18,7 @@ final class BuiltInCrawlerCatalog
      */
     public function __construct(iterable $definitions)
     {
-        $this->definitions = [...$definitions];
+        $this->definitions = array_values([...$definitions]);
     }
 
     public static function defaults(): self

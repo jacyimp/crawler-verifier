@@ -28,7 +28,7 @@ final class CrawlerVerifier
      */
     public function __construct(iterable $providers)
     {
-        $this->providers = [...$providers];
+        $this->providers = array_values([...$providers]);
     }
 
     public static function create(

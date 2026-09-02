@@ -18,7 +18,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 #[CoversClass(IpRangeUpdater::class)]
 #[UsesClass(IpRangeFeed::class)]
@@ -120,7 +119,7 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
 
         self::assertSame(
             ['203.0.113.0/24'],
-            $cache->get(
+            $cache->getArray(
                 PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
@@ -223,7 +222,7 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
     private function updater(
         ArrayCache $cache,
         array $responses,
-        ?stdClass $state = null,
+        ?IpRangeFetcherState $state = null,
     ): IpRangeUpdater {
         return new IpRangeUpdater(
             cache: $cache,
@@ -245,7 +244,7 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
      */
     private function fetcher(
         array $responses,
-        ?stdClass $state = null,
+        ?IpRangeFetcherState $state = null,
     ): IpRangeFetcher {
         return new class(
             $responses,
@@ -256,7 +255,7 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
              */
             public function __construct(
                 private readonly array $responses,
-                private readonly ?stdClass $state,
+                private readonly ?IpRangeFetcherState $state,
             ) {
             }
 
@@ -272,11 +271,9 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
         };
     }
 
-    private function state(): stdClass
+    private function state(): IpRangeFetcherState
     {
-        return (object) [
-            'fetchCalls' => 0,
-        ];
+        return new IpRangeFetcherState();
     }
 
     private function rangesJson(
@@ -293,4 +290,9 @@ final class IpRangeUpdaterFreshnessTest extends TestCase
             JSON_THROW_ON_ERROR,
         );
     }
+}
+
+final class IpRangeFetcherState
+{
+    public int $fetchCalls = 0;
 }
