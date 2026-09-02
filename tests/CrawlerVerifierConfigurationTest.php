@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Tests;
 
-use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
+use JacyImp\CrawlerVerifier\Crawler;
+use JacyImp\CrawlerVerifier\CrawlerVerifier;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -12,18 +13,18 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[UsesClass(InvalidConfigurationException::class)]
-final class CrawlerVerifierConfigTest extends TestCase
+final class CrawlerVerifierConfigurationTest extends TestCase
 {
     #[Test]
     public function itAcceptsAValidCacheKeyPrefix(): void
     {
-        $config = new CrawlerVerifierConfig(
+        $verifier = new CrawlerVerifier(
             cacheKeyPrefix: 'my_app.crawlers',
         );
 
         self::assertSame(
-            'my_app.crawlers',
-            $config->cacheKeyPrefix,
+            Crawler::GPTBot,
+            $verifier->identify('GPTBot/1.1'),
         );
     }
 
@@ -34,7 +35,7 @@ final class CrawlerVerifierConfigTest extends TestCase
             InvalidConfigurationException::class,
         );
 
-        new CrawlerVerifierConfig(
+        new CrawlerVerifier(
             cacheKeyPrefix: '',
         );
     }
@@ -46,7 +47,7 @@ final class CrawlerVerifierConfigTest extends TestCase
             InvalidConfigurationException::class,
         );
 
-        new CrawlerVerifierConfig(
+        new CrawlerVerifier(
             cacheKeyPrefix: 'crawler/verifier',
         );
     }
@@ -58,7 +59,7 @@ final class CrawlerVerifierConfigTest extends TestCase
             InvalidConfigurationException::class,
         );
 
-        new CrawlerVerifierConfig(
+        new CrawlerVerifier(
             dnsCacheTtlSeconds: -1,
         );
     }
@@ -70,7 +71,7 @@ final class CrawlerVerifierConfigTest extends TestCase
             InvalidConfigurationException::class,
         );
 
-        new CrawlerVerifierConfig(
+        new CrawlerVerifier(
             dnsNegativeCacheTtlSeconds: -1,
         );
     }

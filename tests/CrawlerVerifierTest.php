@@ -21,7 +21,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itIdentifiesASupportedCrawlerFromItsUserAgent(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::GPTBot,
                 userAgentFragment: 'GPTBot',
@@ -39,7 +39,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itReturnsNullWhenTheUserAgentDoesNotMatchASupportedCrawler(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::GPTBot,
                 userAgentFragment: 'GPTBot',
@@ -56,7 +56,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itVerifiesACrawlerThroughTheFullPipeline(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::GPTBot,
                 userAgentFragment: 'GPTBot',
@@ -83,7 +83,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itReturnsAnUnverifiedResultWhenTheCrawlerCannotBeIdentified(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::GPTBot,
                 userAgentFragment: 'GPTBot',
@@ -103,7 +103,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itReturnsAnUnverifiedResultWhenCrawlerVerificationFails(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::GPTBot,
                 userAgentFragment: 'GPTBot',
@@ -126,7 +126,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itCanVerifyAKnownCrawlerWithoutAUserAgent(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::Googlebot,
                 userAgentFragment: 'Googlebot',
@@ -153,7 +153,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itTriesTheNextSupportingProviderWhenTheFirstVerificationFails(): void
     {
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: Crawler::Googlebot,
                 userAgentFragment: 'Googlebot',
@@ -191,7 +191,7 @@ final class CrawlerVerifierTest extends TestCase
             }
         };
 
-        $verifier = new CrawlerVerifier([
+        $verifier = new CrawlerVerifier(additionalProviders: [
             $this->provider(
                 crawler: $crawler,
                 userAgentFragment: 'MyCompanyBot',
@@ -226,7 +226,7 @@ final class CrawlerVerifierTest extends TestCase
     #[Test]
     public function itReturnsAnUnverifiedResultWhenNoProviderSupportsTheCrawler(): void
     {
-        $verifier = new CrawlerVerifier([]);
+        $verifier = new CrawlerVerifier(additionalProviders: []);
 
         $result = $verifier->verifyCrawler(
             Crawler::Bingbot,

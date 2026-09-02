@@ -16,7 +16,7 @@ composer require jacyimp/crawler-verifier
 ```php
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
 
-$verifier = CrawlerVerifier::create();
+$verifier = new CrawlerVerifier();
 
 $result = $verifier->verify(
     userAgent: $_SERVER['HTTP_USER_AGENT'] ?? '',
@@ -109,13 +109,10 @@ Crawler Verifier depends only on `psr/simple-cache`, so you can use any PSR-16 i
 
 ```php
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
-use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
 
-$config = new CrawlerVerifierConfig(
+$verifier = new CrawlerVerifier(
     cache: $cache,
 );
-
-$verifier = CrawlerVerifier::create($config);
 ```
 
 The cache is used for:
@@ -134,7 +131,7 @@ Negative: 300 seconds
 They can be changed:
 
 ```php
-$config = new CrawlerVerifierConfig(
+$verifier = new CrawlerVerifier(
     cache: $cache,
     dnsCacheTtlSeconds: 7200,
     dnsNegativeCacheTtlSeconds: 600,
@@ -144,7 +141,7 @@ $config = new CrawlerVerifierConfig(
 A custom cache key prefix can also be supplied:
 
 ```php
-$config = new CrawlerVerifierConfig(
+$verifier = new CrawlerVerifier(
     cache: $cache,
     cacheKeyPrefix: 'my_app.crawlers',
 );
@@ -159,7 +156,9 @@ Crawler verification itself never downloads IP ranges.
 ```php
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
 
-$updater = IpRangeUpdater::create($config);
+$updater = new IpRangeUpdater(
+    cache: $cache,
+);
 
 $result = $updater->refresh();
 ```
@@ -211,7 +210,7 @@ $result->error(
 You can provide your own range snapshots.
 
 ```php
-$config = new CrawlerVerifierConfig(
+$verifier = new CrawlerVerifier(
     localRangeDirectories: [
         __DIR__ . '/crawler-ranges',
     ],
@@ -246,14 +245,16 @@ Explicit local ranges take priority over both refreshed and bundled data.
 
 ## Custom providers
 
-You can bypass the default wiring completely:
+Additional providers can be appended to the built-in provider:
 
 ```php
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
 
-$verifier = new CrawlerVerifier([
-    $provider,
-]);
+$verifier = new CrawlerVerifier(
+    additionalProviders: [
+        $provider,
+    ],
+);
 ```
 
 Custom providers implement:

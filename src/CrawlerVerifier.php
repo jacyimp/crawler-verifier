@@ -9,12 +9,14 @@ use JacyImp\CrawlerVerifier\Dns\CachingDnsResolver;
 use JacyImp\CrawlerVerifier\Dns\DnsResolver;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\Dns\NativeDnsResolver;
+use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\IpRange\Source\DirectoryIpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\FallbackIpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
 use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
 use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
+use Psr\SimpleCache\CacheInterface;
 
 final class CrawlerVerifier
 {
@@ -24,26 +26,44 @@ final class CrawlerVerifier
     private array $providers;
 
     /**
-     * @param iterable<CrawlerProvider> $providers
+     * @param iterable<CrawlerProvider> $additionalProviders
+     * @param list<string> $localRangeDirectories
      */
-    public function __construct(iterable $providers)
-    {
-        $this->providers = array_values([...$providers]);
-    }
+    public function __construct(
+        ?CacheInterface $cache = null,
+        iterable $additionalProviders = [],
+        array $localRangeDirectories = [],
+        string $cacheKeyPrefix = 'crawler_verifier',
+        int $dnsCacheTtlSeconds = 3600,
+        int $dnsNegativeCacheTtlSeconds = 300,
+    ) {
+        self::validateConfiguration(
+            cacheKeyPrefix: $cacheKeyPrefix,
+            dnsCacheTtlSeconds: $dnsCacheTtlSeconds,
+            dnsNegativeCacheTtlSeconds: $dnsNegativeCacheTtlSeconds,
+        );
 
-    public static function create(
-        ?CrawlerVerifierConfig $config = null,
-    ): self {
-        $config ??= new CrawlerVerifierConfig();
-
-        return new self([
+        $builtInProvider =
             new BuiltInCrawlerProvider(
                 catalog: BuiltInCrawlerCatalog::defaults(),
-                rangeSource: self::createRangeSource($config),
-                dnsVerifier: new ForwardConfirmedReverseDnsVerifier(
-                    self::createDnsResolver($config),
+                rangeSource: self::createRangeSource(
+                    cache: $cache,
+                    localRangeDirectories: $localRangeDirectories,
+                    cacheKeyPrefix: $cacheKeyPrefix,
                 ),
-            ),
+                dnsVerifier: new ForwardConfirmedReverseDnsVerifier(
+                    self::createDnsResolver(
+                        cache: $cache,
+                        cacheKeyPrefix: $cacheKeyPrefix,
+                        dnsCacheTtlSeconds: $dnsCacheTtlSeconds,
+                        dnsNegativeCacheTtlSeconds: $dnsNegativeCacheTtlSeconds,
+                    ),
+                ),
+            );
+
+        $this->providers = array_values([
+            $builtInProvider,
+            ...$additionalProviders,
         ]);
     }
 
@@ -108,21 +128,26 @@ final class CrawlerVerifier
         );
     }
 
+    /**
+     * @param list<string> $localRangeDirectories
+     */
     private static function createRangeSource(
-        CrawlerVerifierConfig $config,
+        ?CacheInterface $cache,
+        array $localRangeDirectories,
+        string $cacheKeyPrefix,
     ): IpRangeSource {
         $sources = [];
 
-        foreach ($config->localRangeDirectories as $directory) {
+        foreach ($localRangeDirectories as $directory) {
             $sources[] = new DirectoryIpRangeSource(
                 $directory,
             );
         }
 
-        if ($config->cache !== null) {
+        if ($cache !== null) {
             $sources[] = new PsrCacheIpRangeSource(
-                cache: $config->cache,
-                cacheKeyPrefix: $config->cacheKeyPrefix,
+                cache: $cache,
+                cacheKeyPrefix: $cacheKeyPrefix,
             );
         }
 
@@ -137,20 +162,44 @@ final class CrawlerVerifier
     }
 
     private static function createDnsResolver(
-        CrawlerVerifierConfig $config,
+        ?CacheInterface $cache,
+        string $cacheKeyPrefix,
+        int $dnsCacheTtlSeconds,
+        int $dnsNegativeCacheTtlSeconds,
     ): DnsResolver {
         $resolver = new NativeDnsResolver();
 
-        if ($config->cache === null) {
+        if ($cache === null) {
             return $resolver;
         }
 
         return new CachingDnsResolver(
             resolver: $resolver,
-            cache: $config->cache,
-            positiveTtlSeconds: $config->dnsCacheTtlSeconds,
-            negativeTtlSeconds: $config->dnsNegativeCacheTtlSeconds,
-            cacheKeyPrefix: $config->cacheKeyPrefix,
+            cache: $cache,
+            positiveTtlSeconds: $dnsCacheTtlSeconds,
+            negativeTtlSeconds: $dnsNegativeCacheTtlSeconds,
+            cacheKeyPrefix: $cacheKeyPrefix,
         );
+    }
+
+    private static function validateConfiguration(
+        string $cacheKeyPrefix,
+        int $dnsCacheTtlSeconds,
+        int $dnsNegativeCacheTtlSeconds,
+    ): void {
+        if (
+            $cacheKeyPrefix === ''
+            || preg_match('/^[A-Za-z0-9_.]+$/', $cacheKeyPrefix) !== 1
+        ) {
+            throw InvalidConfigurationException::invalidCacheKeyPrefix();
+        }
+
+        if ($dnsCacheTtlSeconds < 0) {
+            throw InvalidConfigurationException::negativeDnsCacheTtl();
+        }
+
+        if ($dnsNegativeCacheTtlSeconds < 0) {
+            throw InvalidConfigurationException::negativeDnsNegativeCacheTtl();
+        }
     }
 }

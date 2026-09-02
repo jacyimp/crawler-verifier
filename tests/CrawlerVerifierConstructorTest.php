@@ -8,7 +8,6 @@ use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
 use JacyImp\CrawlerVerifier\Catalog\CrawlerDefinition;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
-use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
 use JacyImp\CrawlerVerifier\Dns\CachingDnsResolver;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
@@ -22,6 +21,7 @@ use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdater;
 use JacyImp\CrawlerVerifier\IpRange\Update\IpRangeUpdateResult;
 use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
 use JacyImp\CrawlerVerifier\Tests\Support\ArrayCache;
+use JacyImp\CrawlerVerifier\Tests\Support\NativeFunctions;
 use JacyImp\CrawlerVerifier\VerificationMethod;
 use JacyImp\CrawlerVerifier\VerificationResult;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -29,7 +29,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[UsesClass(CrawlerVerifierConfig::class)]
 #[UsesClass(BuiltInCrawlerCatalog::class)]
 #[UsesClass(CrawlerDefinition::class)]
 #[UsesClass(BuiltInCrawlerProvider::class)]
@@ -44,8 +43,25 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(IpRangeUpdater::class)]
 #[UsesClass(IpRangeFeed::class)]
 #[UsesClass(IpRangeUpdateResult::class)]
-final class CrawlerVerifierFactoryTest extends TestCase
+final class CrawlerVerifierConstructorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        NativeFunctions::reset();
+    }
+
+    #[Test]
+    public function itUsesBundledDefaultsWithoutConfiguration(): void
+    {
+        $result = (new CrawlerVerifier())->verify(
+            userAgent: 'GPTBot/1.1',
+            ip: '132.196.86.42',
+        );
+
+        self::assertTrue($result->verified);
+        self::assertSame(VerificationMethod::IpRange, $result->method);
+    }
+
     #[Test]
     public function itUsesCachedRanges(): void
     {
@@ -61,10 +77,8 @@ final class CrawlerVerifierFactoryTest extends TestCase
             ],
         );
 
-        $verifier = CrawlerVerifier::create(
-            new CrawlerVerifierConfig(
-                cache: $cache,
-            ),
+        $verifier = new CrawlerVerifier(
+            cache: $cache,
         );
 
         $result = $verifier->verify(
@@ -95,11 +109,9 @@ final class CrawlerVerifierFactoryTest extends TestCase
             ],
         );
 
-        $verifier = CrawlerVerifier::create(
-            new CrawlerVerifierConfig(
-                cache: $cache,
-                cacheKeyPrefix: 'my_app',
-            ),
+        $verifier = new CrawlerVerifier(
+            cache: $cache,
+            cacheKeyPrefix: 'my_app',
         );
 
         self::assertTrue(
@@ -145,13 +157,11 @@ final class CrawlerVerifierFactoryTest extends TestCase
                 ],
             );
 
-            $verifier = CrawlerVerifier::create(
-                new CrawlerVerifierConfig(
-                    cache: $cache,
-                    localRangeDirectories: [
-                        $localDirectory,
-                    ],
-                ),
+            $verifier = new CrawlerVerifier(
+                cache: $cache,
+                localRangeDirectories: [
+                    $localDirectory,
+                ],
             );
 
             self::assertTrue(
@@ -206,10 +216,8 @@ final class CrawlerVerifierFactoryTest extends TestCase
             $updater->refresh()->successful(),
         );
 
-        $verifier = CrawlerVerifier::create(
-            new CrawlerVerifierConfig(
-                cache: $cache,
-            ),
+        $verifier = new CrawlerVerifier(
+            cache: $cache,
         );
 
         $result = $verifier->verify(
@@ -222,6 +230,39 @@ final class CrawlerVerifierFactoryTest extends TestCase
             VerificationMethod::IpRange,
             $result->method,
         );
+    }
+
+    #[Test]
+    public function itPassesConfiguredDnsTtlsToTheCachingResolver(): void
+    {
+        $cache = new ArrayCache();
+
+        NativeFunctions::$reverse = static fn (string $ip): string => $ip;
+
+        $verifier = new CrawlerVerifier(
+            cache: $cache,
+            dnsCacheTtlSeconds: 7200,
+            dnsNegativeCacheTtlSeconds: 600,
+        );
+
+        $verifier->verify(
+            userAgent: 'Pinterestbot/1.0',
+            ip: '192.0.2.42',
+        );
+
+        self::assertContains(600, $cache->recordedTtls());
+
+        NativeFunctions::$reverse = static fn (): string => 'crawl.pinterest.com';
+        NativeFunctions::$forward = static fn (): array => [
+            ['ip' => '192.0.2.43'],
+        ];
+
+        $verifier->verify(
+            userAgent: 'Pinterestbot/1.0',
+            ip: '192.0.2.43',
+        );
+
+        self::assertContains(7200, $cache->recordedTtls());
     }
 
     /**

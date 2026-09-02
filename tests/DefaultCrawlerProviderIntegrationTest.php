@@ -36,7 +36,7 @@ final class DefaultCrawlerProviderIntegrationTest extends TestCase
     ): void {
         self::assertSame(
             $expectedCrawler,
-            CrawlerVerifier::create()->identify(
+            (new CrawlerVerifier())->identify(
                 $userAgent,
             ),
         );

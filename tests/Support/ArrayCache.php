@@ -21,6 +21,11 @@ final class ArrayCache implements CacheInterface
      */
     private array $expiresAt = [];
 
+    /**
+     * @var list<int|null>
+     */
+    private array $recordedTtls = [];
+
     public function get(
         string $key,
         mixed $default = null,
@@ -38,6 +43,7 @@ final class ArrayCache implements CacheInterface
         null|int|DateInterval $ttl = null,
     ): bool {
         $seconds = $this->ttlSeconds($ttl);
+        $this->recordedTtls[] = $seconds;
 
         if ($seconds !== null && $seconds <= 0) {
             return $this->delete($key);
@@ -135,6 +141,14 @@ final class ArrayCache implements CacheInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return list<int|null>
+     */
+    public function recordedTtls(): array
+    {
+        return $this->recordedTtls;
     }
 
     public function has(string $key): bool

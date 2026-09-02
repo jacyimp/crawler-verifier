@@ -6,7 +6,6 @@ namespace JacyImp\CrawlerVerifier\IpRange\Update;
 
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
-use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\CrawlerVerifierException;
 use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
@@ -24,31 +23,30 @@ final class IpRangeUpdater
     private array $feeds;
 
     /**
-     * @param iterable<IpRangeFeed> $feeds
+     * @param iterable<IpRangeFeed>|null $feeds
      */
     public function __construct(
         private readonly CacheInterface $cache,
-        iterable $feeds,
-        private readonly IpRangeFetcher $fetcher = new NativeIpRangeFetcher(),
-        private readonly JsonIpRangeParser $parser = new JsonIpRangeParser(),
+        ?iterable $feeds = null,
+        ?IpRangeFetcher $fetcher = null,
+        ?JsonIpRangeParser $parser = null,
         private readonly string $cacheKeyPrefix = 'crawler_verifier',
     ) {
-        $this->feeds = array_values([...$feeds]);
-    }
-
-    public static function create(
-        CrawlerVerifierConfig $config,
-    ): self {
-        if ($config->cache === null) {
-            throw InvalidConfigurationException::cacheRequiredForIpRangeRefresh();
+        if (
+            $this->cacheKeyPrefix === ''
+            || preg_match('/^[A-Za-z0-9_.]+$/', $this->cacheKeyPrefix) !== 1
+        ) {
+            throw InvalidConfigurationException::invalidCacheKeyPrefix();
         }
 
-        return new self(
-            cache: $config->cache,
-            feeds: self::defaultFeeds(),
-            cacheKeyPrefix: $config->cacheKeyPrefix,
-        );
+        $this->feeds = array_values([...($feeds ?? self::defaultFeeds())]);
+        $this->fetcher = $fetcher ?? new NativeIpRangeFetcher();
+        $this->parser = $parser ?? new JsonIpRangeParser();
     }
+
+    private readonly IpRangeFetcher $fetcher;
+
+    private readonly JsonIpRangeParser $parser;
 
     /**
      * @return list<IpRangeFeed>

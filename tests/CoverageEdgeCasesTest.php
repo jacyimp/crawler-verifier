@@ -43,7 +43,7 @@ final class CoverageEdgeCasesTest extends TestCase
             public function supports(CrawlerIdentity $crawler): bool { return false; }
             public function verify(CrawlerIdentity $crawler, string $ip): ?VerificationMethod { return null; }
         };
-        self::assertFalse((new CrawlerVerifier([$provider]))->verifyCrawler($identity, '192.0.2.1')->verified);
+        self::assertFalse((new CrawlerVerifier(additionalProviders: [$provider]))->verifyCrawler($identity, '192.0.2.1')->verified);
     }
     #[Test]
     public function cachingResolverToleratesFailuresAndMalformedValues(): void

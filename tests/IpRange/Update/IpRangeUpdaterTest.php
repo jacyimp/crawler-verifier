@@ -7,7 +7,6 @@ namespace JacyImp\CrawlerVerifier\Tests\IpRange\Update;
 use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
 use JacyImp\CrawlerVerifier\Catalog\CrawlerDefinition;
 use JacyImp\CrawlerVerifier\Crawler;
-use JacyImp\CrawlerVerifier\CrawlerVerifierConfig;
 use JacyImp\CrawlerVerifier\Exception\InvalidConfigurationException;
 use JacyImp\CrawlerVerifier\Exception\InvalidIpRangeDataException;
 use JacyImp\CrawlerVerifier\Exception\IpRangeUpdateException;
@@ -23,7 +22,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[UsesClass(CrawlerVerifierConfig::class)]
 #[UsesClass(BuiltInCrawlerCatalog::class)]
 #[UsesClass(CrawlerDefinition::class)]
 #[UsesClass(IpRangeFeed::class)]
@@ -251,10 +249,8 @@ final class IpRangeUpdaterTest extends TestCase
     #[Test]
     public function itDerivesDefaultFeedsFromTheBuiltInCatalog(): void
     {
-        $updater = IpRangeUpdater::create(
-            new CrawlerVerifierConfig(
-                cache: new ArrayCache(),
-            ),
+        $updater = new IpRangeUpdater(
+            cache: new ArrayCache(),
         );
 
         $result = $updater->refresh(
@@ -269,14 +265,15 @@ final class IpRangeUpdaterTest extends TestCase
     }
 
     #[Test]
-    public function itRequiresACacheWhenUsingTheDefaultUpdater(): void
+    public function itRejectsAnInvalidCachePrefix(): void
     {
         $this->expectException(
             InvalidConfigurationException::class,
         );
 
-        IpRangeUpdater::create(
-            new CrawlerVerifierConfig(),
+        new IpRangeUpdater(
+            cache: new ArrayCache(),
+            cacheKeyPrefix: 'crawler/verifier',
         );
     }
 
