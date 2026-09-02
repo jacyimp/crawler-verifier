@@ -57,7 +57,7 @@ final class CrawlerVerifierConstructorTest extends TestCase
             ip: '132.196.86.42',
         );
 
-        self::assertTrue($result->is_verified);
+        self::assertTrue($result->verified);
         self::assertSame(VerificationMethod::IpRange, $result->method);
     }
 
@@ -85,7 +85,7 @@ final class CrawlerVerifierConstructorTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertTrue($result->is_verified);
+        self::assertTrue($result->verified);
         self::assertSame(
             VerificationMethod::IpRange,
             $result->method,
@@ -117,7 +117,7 @@ final class CrawlerVerifierConstructorTest extends TestCase
             $verifier->verify(
                 userAgent: 'GPTBot/1.1',
                 ip: '192.0.2.42',
-            )->is_verified,
+            )->verified,
         );
     }
 
@@ -167,14 +167,14 @@ final class CrawlerVerifierConstructorTest extends TestCase
                 $verifier->verify(
                     userAgent: 'GPTBot/1.1',
                     ip: '192.0.2.42',
-                )->is_verified,
+                )->verified,
             );
 
             self::assertFalse(
                 $verifier->verify(
                     userAgent: 'GPTBot/1.1',
                     ip: '203.0.113.42',
-                )->is_verified,
+                )->verified,
             );
         } finally {
             @unlink(
@@ -224,7 +224,7 @@ final class CrawlerVerifierConstructorTest extends TestCase
             ip: '192.0.2.42',
         );
 
-        self::assertTrue($result->is_verified);
+        self::assertTrue($result->verified);
         self::assertSame(
             VerificationMethod::IpRange,
             $result->method,

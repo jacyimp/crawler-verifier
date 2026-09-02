@@ -21,7 +21,7 @@ $result = $verifier->verify(
     ip: $_SERVER['REMOTE_ADDR'],
 );
 
-if ($result->is_verified) {
+if ($result->verified) {
     // Genuine crawler.
 }
 ```

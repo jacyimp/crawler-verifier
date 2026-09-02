@@ -7,7 +7,7 @@ namespace JacyImp\CrawlerVerifier;
 final readonly class VerificationResult
 {
     private function __construct(
-        public bool $is_verified,
+        public bool $verified,
         public ?CrawlerIdentity $crawler,
         public ?VerificationMethod $method,
     ) {
@@ -18,7 +18,7 @@ final readonly class VerificationResult
         VerificationMethod $method,
     ): self {
         return new self(
-            is_verified: true,
+            verified: true,
             crawler: $crawler,
             method: $method,
         );
@@ -28,7 +28,7 @@ final readonly class VerificationResult
         ?CrawlerIdentity $crawler = null,
     ): self {
         return new self(
-            is_verified: false,
+            verified: false,
             crawler: $crawler,
             method: null,
         );

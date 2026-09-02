@@ -20,7 +20,7 @@ final class VerificationResultTest extends TestCase
             VerificationMethod::IpRange,
         );
 
-        self::assertTrue($result->is_verified);
+        self::assertTrue($result->verified);
         self::assertSame(Crawler::GPTBot, $result->crawler);
         self::assertSame(VerificationMethod::IpRange, $result->method);
     }
@@ -30,7 +30,7 @@ final class VerificationResultTest extends TestCase
     {
         $result = VerificationResult::unverified(Crawler::Googlebot);
 
-        self::assertFalse($result->is_verified);
+        self::assertFalse($result->verified);
         self::assertSame(Crawler::Googlebot, $result->crawler);
         self::assertNull($result->method);
     }
@@ -40,7 +40,7 @@ final class VerificationResultTest extends TestCase
     {
         $result = VerificationResult::unverified();
 
-        self::assertFalse($result->is_verified);
+        self::assertFalse($result->verified);
         self::assertNull($result->crawler);
         self::assertNull($result->method);
     }
