@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier;
 
+use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
 use JacyImp\CrawlerVerifier\Dns\CachingDnsResolver;
 use JacyImp\CrawlerVerifier\Dns\DnsResolver;
+use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
 use JacyImp\CrawlerVerifier\Dns\NativeDnsResolver;
-use JacyImp\CrawlerVerifier\Ip\DirectoryIpRangeSource;
-use JacyImp\CrawlerVerifier\Ip\FallbackIpRangeSource;
-use JacyImp\CrawlerVerifier\Ip\IpRangeSource;
-use JacyImp\CrawlerVerifier\Ip\PsrCacheIpRangeSource;
+use JacyImp\CrawlerVerifier\IpRange\Source\DirectoryIpRangeSource;
+use JacyImp\CrawlerVerifier\IpRange\Source\FallbackIpRangeSource;
+use JacyImp\CrawlerVerifier\IpRange\Source\IpRangeSource;
+use JacyImp\CrawlerVerifier\IpRange\Source\PsrCacheIpRangeSource;
+use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
 use JacyImp\CrawlerVerifier\Provider\CrawlerProvider;
-use JacyImp\CrawlerVerifier\Provider\CrawlerProviderRegistry;
 
 final class CrawlerVerifier
 {
@@ -34,16 +36,15 @@ final class CrawlerVerifier
     ): self {
         $config ??= new CrawlerVerifierConfig();
 
-        return new self(
-            CrawlerProviderRegistry::defaults(
-                rangeSource: self::createRangeSource(
-                    $config,
+        return new self([
+            new BuiltInCrawlerProvider(
+                catalog: BuiltInCrawlerCatalog::defaults(),
+                rangeSource: self::createRangeSource($config),
+                dnsVerifier: new ForwardConfirmedReverseDnsVerifier(
+                    self::createDnsResolver($config),
                 ),
-                dnsResolver: self::createDnsResolver(
-                    $config,
-                ),
-            )->all(),
-        );
+            ),
+        ]);
     }
 
     public function verify(

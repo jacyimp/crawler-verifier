@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JacyImp\CrawlerVerifier\Exception;
 
 use InvalidArgumentException;
-use JacyImp\CrawlerVerifier\Crawler;
 
 final class InvalidConfigurationException extends InvalidArgumentException implements CrawlerVerifierException
 {
@@ -49,13 +48,5 @@ final class InvalidConfigurationException extends InvalidArgumentException imple
         return new self(
             'Maximum IP range age cannot be negative.',
         );
-    }
-
-    public static function duplicateIpRangeFeed(Crawler $crawler): self
-    {
-        return new self(sprintf(
-            'An IP range feed is already registered for "%s".',
-            $crawler->value,
-        ));
     }
 }

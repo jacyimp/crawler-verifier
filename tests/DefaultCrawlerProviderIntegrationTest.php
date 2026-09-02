@@ -4,22 +4,15 @@ declare(strict_types=1);
 
 namespace JacyImp\CrawlerVerifier\Tests;
 
+use JacyImp\CrawlerVerifier\Catalog\BuiltInCrawlerCatalog;
+use JacyImp\CrawlerVerifier\Catalog\CrawlerDefinition;
 use JacyImp\CrawlerVerifier\Crawler;
 use JacyImp\CrawlerVerifier\CrawlerVerifier;
 use JacyImp\CrawlerVerifier\Dns\ForwardConfirmedReverseDnsVerifier;
-use JacyImp\CrawlerVerifier\Ip\DirectoryIpRangeSource;
-use JacyImp\CrawlerVerifier\Ip\FallbackIpRangeSource;
-use JacyImp\CrawlerVerifier\Ip\IpRangeMatcher;
-use JacyImp\CrawlerVerifier\Provider\AppleProvider;
-use JacyImp\CrawlerVerifier\Provider\BaiduProvider;
-use JacyImp\CrawlerVerifier\Provider\BingProvider;
-use JacyImp\CrawlerVerifier\Provider\CrawlerProviderRegistry;
-use JacyImp\CrawlerVerifier\Provider\DuckDuckGoProvider;
-use JacyImp\CrawlerVerifier\Provider\GoogleProvider;
-use JacyImp\CrawlerVerifier\Provider\IpRangeCrawlerProvider;
-use JacyImp\CrawlerVerifier\Provider\OpenAiProvider;
-use JacyImp\CrawlerVerifier\Provider\PerplexityProvider;
-use JacyImp\CrawlerVerifier\Provider\PinterestProvider;
+use JacyImp\CrawlerVerifier\IpRange\IpRangeMatcher;
+use JacyImp\CrawlerVerifier\IpRange\Source\DirectoryIpRangeSource;
+use JacyImp\CrawlerVerifier\IpRange\Source\FallbackIpRangeSource;
+use JacyImp\CrawlerVerifier\Provider\BuiltInCrawlerProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,16 +20,9 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CrawlerVerifier::class)]
-#[UsesClass(CrawlerProviderRegistry::class)]
-#[UsesClass(IpRangeCrawlerProvider::class)]
-#[UsesClass(OpenAiProvider::class)]
-#[UsesClass(GoogleProvider::class)]
-#[UsesClass(BingProvider::class)]
-#[UsesClass(AppleProvider::class)]
-#[UsesClass(DuckDuckGoProvider::class)]
-#[UsesClass(PinterestProvider::class)]
-#[UsesClass(BaiduProvider::class)]
-#[UsesClass(PerplexityProvider::class)]
+#[UsesClass(BuiltInCrawlerCatalog::class)]
+#[UsesClass(CrawlerDefinition::class)]
+#[UsesClass(BuiltInCrawlerProvider::class)]
 #[UsesClass(ForwardConfirmedReverseDnsVerifier::class)]
 #[UsesClass(DirectoryIpRangeSource::class)]
 #[UsesClass(FallbackIpRangeSource::class)]
