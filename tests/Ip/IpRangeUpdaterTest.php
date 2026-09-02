@@ -53,19 +53,15 @@ final class IpRangeUpdaterTest extends TestCase
         self::assertSame(
             ['192.0.2.0/24'],
             $cache->get(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
-            ),
+            )['ranges'],
         );
 
-        self::assertIsInt(
-            $cache->get(
-                PsrCacheIpRangeSource::refreshedAtKey(
-                    Crawler::GPTBot,
-                ),
-            ),
-        );
+        self::assertIsInt($cache->get(
+            PsrCacheIpRangeSource::key(Crawler::GPTBot),
+        )['refreshed_at']);
     }
 
     #[Test]
@@ -88,11 +84,11 @@ final class IpRangeUpdaterTest extends TestCase
         self::assertSame(
             ['192.0.2.0/24'],
             $cache->get(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                     'my_app',
                 ),
-            ),
+            )['ranges'],
         );
     }
 
@@ -131,7 +127,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertTrue(
             $cache->has(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
             ),
@@ -139,7 +135,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertFalse(
             $cache->has(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::OaiSearchBot,
                 ),
             ),
@@ -153,19 +149,13 @@ final class IpRangeUpdaterTest extends TestCase
         $state = $this->state();
 
         $cache->set(
-            PsrCacheIpRangeSource::rangesKey(
-                Crawler::GPTBot,
-            ),
+            PsrCacheIpRangeSource::key(Crawler::GPTBot),
             [
+                'ranges' => [
                 '192.0.2.0/24',
+                ],
+                'refreshed_at' => time(),
             ],
-        );
-
-        $cache->set(
-            PsrCacheIpRangeSource::refreshedAtKey(
-                Crawler::GPTBot,
-            ),
-            time(),
         );
 
         $updater = $this->updater(
@@ -208,19 +198,13 @@ final class IpRangeUpdaterTest extends TestCase
         $state = $this->state();
 
         $cache->set(
-            PsrCacheIpRangeSource::rangesKey(
-                Crawler::GPTBot,
-            ),
+            PsrCacheIpRangeSource::key(Crawler::GPTBot),
             [
+                'ranges' => [
                 '192.0.2.0/24',
+                ],
+                'refreshed_at' => time() - 7200,
             ],
-        );
-
-        $cache->set(
-            PsrCacheIpRangeSource::refreshedAtKey(
-                Crawler::GPTBot,
-            ),
-            time() - 7200,
         );
 
         $updater = $this->updater(
@@ -250,10 +234,10 @@ final class IpRangeUpdaterTest extends TestCase
         self::assertSame(
             ['203.0.113.0/24'],
             $cache->get(
-                PsrCacheIpRangeSource::rangesKey(
+                PsrCacheIpRangeSource::key(
                     Crawler::GPTBot,
                 ),
-            ),
+            )['ranges'],
         );
     }
 
@@ -264,11 +248,9 @@ final class IpRangeUpdaterTest extends TestCase
         $state = $this->state();
 
         $cache->set(
-            PsrCacheIpRangeSource::rangesKey(
-                Crawler::GPTBot,
-            ),
+            PsrCacheIpRangeSource::key(Crawler::GPTBot),
             [
-                '192.0.2.0/24',
+                'ranges' => ['192.0.2.0/24'],
             ],
         );
 
@@ -304,10 +286,10 @@ final class IpRangeUpdaterTest extends TestCase
         $state = $this->state();
 
         $cache->set(
-            PsrCacheIpRangeSource::refreshedAtKey(
-                Crawler::GPTBot,
-            ),
-            time(),
+            PsrCacheIpRangeSource::key(Crawler::GPTBot),
+            [
+                'refreshed_at' => time(),
+            ],
         );
 
         $updater = $this->updater(
@@ -353,13 +335,16 @@ final class IpRangeUpdaterTest extends TestCase
     {
         $cache = new ArrayCache();
 
-        $key = PsrCacheIpRangeSource::rangesKey(
+        $key = PsrCacheIpRangeSource::key(
             Crawler::GPTBot,
         );
 
         $cache->set(
             $key,
-            ['192.0.2.0/24'],
+            [
+                'ranges' => ['192.0.2.0/24'],
+                'refreshed_at' => time() - 3600,
+            ],
         );
 
         $updater = $this->updater(
@@ -377,7 +362,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get($key),
+            $cache->get($key)['ranges'],
         );
     }
 
@@ -386,13 +371,16 @@ final class IpRangeUpdaterTest extends TestCase
     {
         $cache = new ArrayCache();
 
-        $key = PsrCacheIpRangeSource::rangesKey(
+        $key = PsrCacheIpRangeSource::key(
             Crawler::GPTBot,
         );
 
         $cache->set(
             $key,
-            ['192.0.2.0/24'],
+            [
+                'ranges' => ['192.0.2.0/24'],
+                'refreshed_at' => time() - 3600,
+            ],
         );
 
         $updater = $this->updater(
@@ -410,7 +398,7 @@ final class IpRangeUpdaterTest extends TestCase
 
         self::assertSame(
             ['192.0.2.0/24'],
-            $cache->get($key),
+            $cache->get($key)['ranges'],
         );
     }
 
