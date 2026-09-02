@@ -29,7 +29,7 @@ if ($result->is_verified) {
 The result contains the claimed crawler and verification method:
 
 ```php
-$result->verified;
+$result->is_verified;
 $result->crawler;
 $result->method;
 ```
